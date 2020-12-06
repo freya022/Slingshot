@@ -1,0 +1,27 @@
+JFXButton {
+	-fx-background-color: rgba(225, 225, 225, 0.1);
+	-fx-border-color: rgb(10, 10, 10);
+	-fx-text-fill: white;
+}
+
+JFXButton:hover {
+	-fx-background-color: rgba(225, 225, 225, 0.25);
+}
+
+Label, JFXToggleButton {
+	-fx-text-fill: white;
+	-fx-font-size: 13px;
+}
+
+#title {
+	-fx-font-size: 18px;
+}
+
+JFXButton, Label, JFXToggleButton {
+	-fx-font-family: Segoe UI;
+}
+
+#settingsRoot {
+	-fx-background-color: rgba(35, 35, 35, 1);
+}
+

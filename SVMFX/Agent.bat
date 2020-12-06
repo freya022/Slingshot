@@ -1,0 +1,1 @@
+"C:\Program Files\AdoptOpenJDK\graalvm-ce-java11-20.2.0\bin\java.exe" -agentlib:native-image-agent=config-output-dir="reports" -jar "..\target\Slingshot-0.1.jar"

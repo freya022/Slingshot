@@ -1,0 +1,55 @@
+#playButton {
+	-fx-background-color: rgba(25,25,25, 0.5);
+	-fx-border-color: rgb(225, 225, 225);
+}
+
+#playButton:hover {
+	-fx-background-color: rgba(25,25,25, 0.75);
+}
+
+.JFXTextField {
+	-fx-background-color: rgba(25,25,25, 0.6);
+	-fx-border-color: rgb(225, 225, 225);
+	-fx-text-fill: white;
+	-fx-prompt-text-fill: darkgrey;
+}
+
+.invalidText {
+	-fx-text-fill: rgb(255, 0, 0);
+}
+
+#progressBox {
+	-fx-background-color: rgba(25,25,25,0.5);
+}
+
+.track {
+	-fx-background-color: rgb(50,50,50);
+}
+
+#VersionChoiceBox {
+	-fx-background-color: rgba(25, 25, 25, 0.6);
+	-fx-border-color: rgba(225, 225, 225);
+}
+
+#VersionChoiceBox .label {
+	-fx-text-fill: #e1e1e1;
+}
+
+#VersionChoiceBox:hover {
+	-fx-background-color:  rgba(25,25,25,0.75);
+}
+
+#VersionChoiceBox .arrow {
+	-fx-background-color:  rgba(225,225,225,0.1);
+	-fx-border-color:  rgba(225,225,225,0.5);
+}
+
+#VersionChoiceBox .context-menu {
+    -fx-background-color: rgba(50,50,50,0.5);
+	-fx-border-color:  rgba(225,225,225);
+}
+
+Separator .line {
+    -fx-border-width: 0 0 0 1;
+    -fx-border-color: white;
+}
