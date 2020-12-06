@@ -79,3 +79,4 @@ fabric.properties
 SVMFX/ResourceHacker.ini
 SVMFX/Test.res
 SVMFX/reports
+/src/main/resources/com/freya02/slingshot/*.dll
