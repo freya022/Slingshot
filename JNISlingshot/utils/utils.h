@@ -9,11 +9,6 @@
 #include <chrono>
 #include <iostream>
 
-#ifndef _WIN32
-	#define min std::min
-	#define max std::max
-#endif
-
 template<typename T>
 static void measureTime(const std::string &desc, int iterations, T code) {
 	double worst = (1 << 16) / -1.0, best = (1 << 16) / 1.0, total = 0, average;
@@ -26,8 +21,8 @@ static void measureTime(const std::string &desc, int iterations, T code) {
 		auto end = std::chrono::system_clock::now();
 
 		double elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / 1000000.0;
-		worst = max(worst, elapsed);
-		best = min(best, elapsed);
+		worst = std::max(worst, elapsed);
+		best = std::min(best, elapsed);
 		total += elapsed;
 	}
 
