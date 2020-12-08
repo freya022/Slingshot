@@ -27,10 +27,10 @@ public class AOT {
 	private static boolean init = false;
 
 	static {
-		try (InputStream loaderDllStream = AOT.class.getResourceAsStream("JNISlingshotLoader.dll");
-		     InputStream mainDllStream = AOT.class.getResourceAsStream("JNISlingshot.dll");
-		     InputStream libcurlDllStream = AOT.class.getResourceAsStream("libcurl.dll");
-		     InputStream zlibDllStream = AOT.class.getResourceAsStream("zlib1.dll")) {
+		try (InputStream loaderDllStream = getDllStream("JNISlingshotLoader.dll");
+		     InputStream mainDllStream = getDllStream("JNISlingshot.dll");
+		     InputStream libcurlDllStream = getDllStream("libcurl.dll");
+		     InputStream zlibDllStream = getDllStream("zlib1.dll")) {
 
 			LOADER_DLL_BYTES = loaderDllStream.readAllBytes();
 			MAIN_DLL_BYTES = mainDllStream.readAllBytes();
@@ -61,6 +61,10 @@ public class AOT {
 		} catch (IOException | URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static InputStream getDllStream(String dllName) throws URISyntaxException, IOException {
+		return Files.newInputStream(getProjectPath("JNISlingshot\\cmake-build-release\\" + dllName));
 	}
 
 	private static Path getProjectPath() throws URISyntaxException {
