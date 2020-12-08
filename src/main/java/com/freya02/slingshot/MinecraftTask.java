@@ -11,7 +11,6 @@ import javafx.application.Platform;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -27,30 +26,6 @@ import static com.freya02.slingshot.Main.ASSETS_PATH;
 import static com.freya02.slingshot.Main.MINECRAFT_PATH;
 
 public class MinecraftTask extends IOOperation {
-	private static final boolean USE_TEST_DLL = false;
-
-	private static final byte[] LOADER_DLL_BYTES;
-	private static final byte[] MAIN_DLL_BYTES;
-	private static final byte[] ZLIB_BYTES;
-	private static final byte[] LIBCURL_BYTES;
-
-	static {
-		try (InputStream loaderDllStream = MinecraftTask.class.getResourceAsStream("JNISlingshotLoader.dll");
-		     InputStream mainDllStream = MinecraftTask.class.getResourceAsStream("JNISlingshot.dll");
-		     InputStream libcurlDllStream = MinecraftTask.class.getResourceAsStream("libcurl.dll");
-		     InputStream zlibDllStream = MinecraftTask.class.getResourceAsStream("zlib1.dll")) {
-
-			LOADER_DLL_BYTES = loaderDllStream.readAllBytes();
-			MAIN_DLL_BYTES = mainDllStream.readAllBytes();
-			LIBCURL_BYTES = libcurlDllStream.readAllBytes();
-			ZLIB_BYTES = zlibDllStream.readAllBytes();
-
-			System.out.println("Preloaded DLLs");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	private final Path assetsFolder;
 	private final Path jreFolder;
 	private final Path gameFolderPath;
@@ -80,30 +55,12 @@ public class MinecraftTask extends IOOperation {
 
 		dropboxGameFolder = getDropboxGameFolder(targetVersion);
 
-		init(); //Shouldn't have to do this but heh, it should be basically free and is a safety
+		AOT.init(); //Shouldn't have to do this but heh, it should be basically free and is a safety
 	}
 
 	@NotNull
 	private String getDropboxGameFolder(String version) {
 		return "/Versions/" + modpackName + '/' + version;
-	}
-
-	private static boolean init = false;
-	public synchronized static void init() throws IOException {
-		if (init) return;
-		init = true;
-
-		final Path tempDllFolder = Files.createTempDirectory("JNISlingshot");
-		final String loaderDllPath = writeTempDll(tempDllFolder, "JNISlingshotLoader.dll", LOADER_DLL_BYTES);
-		final String mainDllPath = writeTempDll(tempDllFolder, "JNISlingshot.dll", MAIN_DLL_BYTES);
-		writeTempDll(tempDllFolder, "libcurl.dll", LIBCURL_BYTES);
-		writeTempDll(tempDllFolder, "zlib1.dll", ZLIB_BYTES);
-
-		System.load(loaderDllPath);
-		addDllPath(tempDllFolder.toString());
-
-		final String testDllPath = Path.of("JNISlingshot\\cmake-build-release\\JNISlingshot.dll").toAbsolutePath().toString();
-		System.load(USE_TEST_DLL ? testDllPath : mainDllPath);
 	}
 
 	private ProgressFormatter progressFormatter = MinecraftTask::formatJreProgress;
@@ -115,16 +72,9 @@ public class MinecraftTask extends IOOperation {
 		}
 	}
 
-	private static String writeTempDll(Path tempDllDir, String dllName, byte[] bytes) throws IOException {
-		final Path tempDll = tempDllDir.resolve(dllName);
-		Files.write(tempDll, bytes, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
-		return tempDll.toString();
-	}
-
 	private static native void downloadFile0(String dropboxPath, String osPath, Object oThis);
 	private static native long getDownloadSize0(String dropboxPath);
 	static native String[] listFolder0(String dropboxPath);
-	private static native void addDllPath(String dllPath);
 
 	private static native void launchGame0(String javaw, String workingDir, String commandline);
 

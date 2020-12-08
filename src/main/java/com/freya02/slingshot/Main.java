@@ -55,7 +55,7 @@ public class Main {
 
 			Platform.setImplicitExit(false);
 
-			MinecraftTask.init();
+			AOT.init();
 
 			startLauncher();
 		} catch (IOException e) {

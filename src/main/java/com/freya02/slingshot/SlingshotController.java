@@ -1,7 +1,6 @@
 package com.freya02.slingshot;
 
 import com.freya02.slingshot.auth.Credentials;
-import com.freya02.slingshot.settings.Settings;
 import com.freya02.slingshot.settings.SettingsController;
 import com.freya02.ui.UILib;
 import com.freya02.ui.window.LazyWindow;
@@ -25,15 +24,16 @@ import javafx.scene.paint.Color;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static com.freya02.slingshot.Main.PROFILE_PICTURE_PATH;
 import static com.freya02.slingshot.Main.PROFILE_USERNAME_PATH;
@@ -74,25 +74,6 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
  * nah
  */
 public class SlingshotController extends LazyWindow {
-	private static final List<String> backgrounds;
-	private static final List<String> allBackgrounds;
-
-	static {
-		try {
-			//Should be [Project]/target/classes
-			allBackgrounds = Files.walk(Path.of(SlingshotController.class.getProtectionDomain().getCodeSource().getLocation().toURI()).resolve("com\\freya02\\slingshot\\backgrounds"))
-					.filter(Files::isRegularFile)
-					.map(p -> p.getFileName().toString())
-					.collect(Collectors.toList());
-
-			backgrounds = allBackgrounds.stream().filter(s -> !s.startsWith("cat")).collect(Collectors.toList());
-
-			System.out.println("Loaded " + allBackgrounds.size() + " backgrounds");
-		} catch (IOException | URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	@FXML private JFXButton playButton, modsButton, settingsButton;
 	@FXML private VBox progressBox;
 	@FXML private Label progressText, usernameLabel;
@@ -110,9 +91,7 @@ public class SlingshotController extends LazyWindow {
 	protected void onInitialized() {
 		new Thread(this::waitForDropbox).start();
 
-		List<String> backgroundSource = Settings.getInstance().isNSFW() ? allBackgrounds : backgrounds;
-		final String backgroundName = backgroundSource.get(new Random().nextInt(backgroundSource.size()));
-		backgroundView.setImage(new Image(SlingshotController.class.getResource("backgrounds/" + backgroundName).toString()));
+		backgroundView.setImage(new Image(AOT.getRandomBackgroundUrl()));
 
 		final SimpleBooleanProperty modsFolderNotExistsProperty = new SimpleBooleanProperty(true);
 
@@ -280,7 +259,7 @@ public class SlingshotController extends LazyWindow {
 
 	private void waitForDropbox() {
 		try {
-			MinecraftTask.init();
+			AOT.init();
 
 			final ExecutorService es = Executors.newCachedThreadPool();
 			final String[] modpackNames = es.submit(() -> {

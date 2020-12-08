@@ -4,7 +4,7 @@
 
 #include "loader.h"
 
-[[maybe_unused]] void Java_com_freya02_slingshot_MinecraftTask_addDllPath(JNIEnv* env, jclass, jstring jDllFolderPath) {
+[[maybe_unused]] void addDllPath(JNIEnv* env, jclass, jstring jDllFolderPath) {
 	const char* dllFolderPath = env->GetStringUTFChars(jDllFolderPath, nullptr);
 
 	auto pathBuffer = new char[65535];
