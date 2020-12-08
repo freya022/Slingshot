@@ -74,7 +74,6 @@ public class MinecraftTask extends IOOperation {
 
 	private static native void downloadFile0(String dropboxPath, String osPath, Object oThis);
 	private static native long getDownloadSize0(String dropboxPath);
-	static native String[] listFolder0(String dropboxPath);
 
 	private static native void launchGame0(String javaw, String workingDir, String commandline);
 

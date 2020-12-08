@@ -257,17 +257,19 @@ public class SlingshotController extends LazyWindow {
 		}
 	}
 
+	private static native String[] listFolder0(String dropboxPath);
+
 	private void waitForDropbox() {
 		try {
 			AOT.init();
 
 			final ExecutorService es = Executors.newCachedThreadPool();
 			final String[] modpackNames = es.submit(() -> {
-				final String[] modpacks = MinecraftTask.listFolder0("/Versions");
+				final String[] modpacks = listFolder0("/Versions");
 
 				for (String modpackName : modpacks) {
 					es.submit(() -> {
-						modpackToVersionMap.put(modpackName, MinecraftTask.listFolder0("/Versions/" + modpackName));
+						modpackToVersionMap.put(modpackName, listFolder0("/Versions/" + modpackName));
 					});
 				}
 
