@@ -41,7 +41,7 @@ public class AOT {
 
 			//Should be [Project]/target/classes
 			int offset = 0;
-			final List<Path> paths = Files.walk(getClassPath("..\\..\\ExternalResources\\backgrounds"))
+			final List<Path> paths = Files.walk(getProjectPath("ExternalResources\\backgrounds"))
 					.filter(Files::isRegularFile)
 					.collect(Collectors.toList());
 			backgroundBytes = new ArrayList<>(paths.size());
@@ -63,12 +63,12 @@ public class AOT {
 		}
 	}
 
-	private static Path getClassPath() throws URISyntaxException {
-		return Path.of(SlingshotController.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+	private static Path getProjectPath() throws URISyntaxException {
+		return Path.of(SlingshotController.class.getProtectionDomain().getCodeSource().getLocation().toURI()).resolve("..\\..");
 	}
 
-	private static Path getClassPath(String toResolve) throws URISyntaxException {
-		return getClassPath().resolve(toResolve);
+	private static Path getProjectPath(String toResolve) throws URISyntaxException {
+		return getProjectPath().resolve(toResolve);
 	}
 
 	private static native void addDllPath(String dllPath);
