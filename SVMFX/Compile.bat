@@ -3,7 +3,7 @@
 set sourceFolder=../target/client/x86_64-windows
 set executableName=Slingshot.exe
 set inputExe="%sourceFolder%/%executableName%"
-set iconPath=..\src\main\resources\com\freya02\slingshot\Icon.ico
+set iconPath=..\Icon.ico
 
 if not exist ..\pom.xml (
 	echo "Not a valid Maven project"
