@@ -91,7 +91,7 @@ public class SlingshotController extends LazyWindow {
 	protected void onInitialized() {
 		new Thread(this::waitForDropbox).start();
 
-		backgroundView.setImage(new Image(AOT.getRandomBackgroundUrl()));
+		backgroundView.setImage(new Image(AOT.getRandomBackgroundBytes()));
 
 		final SimpleBooleanProperty modsFolderNotExistsProperty = new SimpleBooleanProperty(true);
 

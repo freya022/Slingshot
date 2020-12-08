@@ -2,12 +2,14 @@ package com.freya02.slingshot;
 
 import com.freya02.slingshot.settings.Settings;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -20,8 +22,8 @@ public class AOT {
 	private static final byte[] ZLIB_BYTES;
 	private static final byte[] LIBCURL_BYTES;
 
-	private static final List<String> backgrounds;
-	private static final List<String> allBackgrounds;
+	private static final List<ByteArrayInputStream> backgroundBytes;
+	private static final int nsfwOffset;
 	private static boolean init = false;
 
 	static {
@@ -38,17 +40,35 @@ public class AOT {
 			System.out.println("Preloaded DLLs");
 
 			//Should be [Project]/target/classes
-			allBackgrounds = Files.walk(Path.of(SlingshotController.class.getProtectionDomain().getCodeSource().getLocation().toURI()).resolve("com\\freya02\\slingshot\\backgrounds"))
+			int offset = 0;
+			final List<Path> paths = Files.walk(getClassPath("..\\..\\ExternalResources\\backgrounds"))
 					.filter(Files::isRegularFile)
-					.map(p -> p.getFileName().toString())
 					.collect(Collectors.toList());
+			backgroundBytes = new ArrayList<>(paths.size());
+			for (Path path : paths) {
+				final byte[] bytes = Files.readAllBytes(path);
 
-			backgrounds = allBackgrounds.stream().filter(s -> !s.startsWith("cat")).collect(Collectors.toList());
+				backgroundBytes.add(backgroundBytes.size() - offset, new ByteArrayInputStream(bytes));
 
-			System.out.println("Loaded " + allBackgrounds.size() + " backgrounds");
+				if (path.getFileName().toString().startsWith("cat")) {
+					offset++;
+				}
+			}
+
+			nsfwOffset = offset;
+
+			System.out.println("Loaded " + backgroundBytes.size() + " backgrounds");
 		} catch (IOException | URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static Path getClassPath() throws URISyntaxException {
+		return Path.of(SlingshotController.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+	}
+
+	private static Path getClassPath(String toResolve) throws URISyntaxException {
+		return getClassPath().resolve(toResolve);
 	}
 
 	private static native void addDllPath(String dllPath);
@@ -75,9 +95,8 @@ public class AOT {
 		return tempDll.toString();
 	}
 
-	public static String getRandomBackgroundUrl() {
-		List<String> backgroundSource = Settings.getInstance().isNSFW() ? allBackgrounds : backgrounds;
-		final String backgroundName = backgroundSource.get(new Random().nextInt(backgroundSource.size()));
-		return SlingshotController.class.getResource("backgrounds/" + backgroundName).toString();
+	public static ByteArrayInputStream getRandomBackgroundBytes() {
+		int max = Settings.getInstance().isNSFW() ? backgroundBytes.size() : backgroundBytes.size() - nsfwOffset;
+		return backgroundBytes.get(new Random().nextInt(max));
 	}
 }
