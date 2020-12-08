@@ -168,12 +168,12 @@ public class SlingshotController extends LazyWindow {
 		showButtons.set(false);
 
 		try {
-			final MinecraftTask minecraftTask = new MinecraftTask(modpackChoiceBox.getValue(), versionChoiceBox.getValue());
+			final SlingshotTask slingshotTask = new SlingshotTask(modpackChoiceBox.getValue(), versionChoiceBox.getValue());
 
-			progressText.textProperty().bind(minecraftTask.stateProperty());
-			progressBar.progressProperty().bind(minecraftTask.progressProperty());
+			progressText.textProperty().bind(slingshotTask.stateProperty());
+			progressBar.progressProperty().bind(slingshotTask.progressProperty());
 
-			minecraftTask.start();
+			slingshotTask.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 			showButtons.set(true);

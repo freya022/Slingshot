@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 import static com.freya02.slingshot.Main.ASSETS_PATH;
 import static com.freya02.slingshot.Main.MINECRAFT_PATH;
 
-public class MinecraftTask extends IOOperation {
+public class SlingshotTask extends IOOperation {
 	private final Path assetsFolder;
 	private final Path jreFolder;
 	private final Path gameFolderPath;
@@ -40,7 +40,7 @@ public class MinecraftTask extends IOOperation {
 
 	private final Object mutex = new Object();
 
-	MinecraftTask(String modpackName, String targetVersion) throws IOException {
+	SlingshotTask(String modpackName, String targetVersion) throws IOException {
 		this.modpackName = modpackName;
 		this.targetVersion = targetVersion;
 
@@ -63,7 +63,7 @@ public class MinecraftTask extends IOOperation {
 		return "/Versions/" + modpackName + '/' + version;
 	}
 
-	private ProgressFormatter progressFormatter = MinecraftTask::formatJreProgress;
+	private ProgressFormatter progressFormatter = SlingshotTask::formatJreProgress;
 	@SuppressWarnings("unused") //Used by JNI
 	private void onWrite(int writtenBytes) {
 		synchronized (mutex) {
@@ -267,7 +267,7 @@ public class MinecraftTask extends IOOperation {
 	}
 
 	private void downloadJreFiles(List<Path> files, CheckResults infos, long jreSizeToDownload) throws InterruptedException, IOException {
-		progressFormatter = MinecraftTask::formatJreProgress;
+		progressFormatter = SlingshotTask::formatJreProgress;
 
 		//If files to download heavier than entire ZIP, download ZIP and unzip, else, download file by file
 		if (jreSizeToDownload > getJreSize()) {
@@ -307,7 +307,7 @@ public class MinecraftTask extends IOOperation {
 	}
 
 	private void downloadAssetsFiles(List<Path> files, CheckResults infos) throws InterruptedException {
-		progressFormatter = MinecraftTask::formatAssetsProgress;
+		progressFormatter = SlingshotTask::formatAssetsProgress;
 
 		final ExecutorService es = Executors.newFixedThreadPool(16);
 		for (Path osPath : files) {
@@ -328,7 +328,7 @@ public class MinecraftTask extends IOOperation {
 	}
 
 	private void downloadGameFiles(List<Path> files, CheckResults infos) throws InterruptedException {
-		progressFormatter = MinecraftTask::formatGameProgress;
+		progressFormatter = SlingshotTask::formatGameProgress;
 
 		final ExecutorService es = Executors.newFixedThreadPool(16);
 		for (Path osPath : files) {
