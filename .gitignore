@@ -76,7 +76,6 @@ fabric.properties
 # Project exclude paths
 /target/
 .idea
-SVMFX/ResourceHacker.ini
 SVMFX/Test.res
+SVMFX/Test.obj
 SVMFX/reports
-/src/main/resources/com/freya02/slingshot/*.dll
