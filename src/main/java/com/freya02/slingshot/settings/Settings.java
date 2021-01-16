@@ -31,7 +31,7 @@ public class Settings {
 			load(strings);
 		} else {
 			Files.deleteIfExists(SETTINGS_PATH);
-			System.err.println("WARN : Invalid credentials file, deleting file");
+			System.err.println("WARN : Invalid settings file, deleting file");
 		}
 	}
 
