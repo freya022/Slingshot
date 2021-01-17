@@ -20,19 +20,15 @@ public class Settings {
 
 	private static Settings instance;
 	private boolean NSFW = false;
-	//Perhaps specific to Hotspot, might not work on OpenJ9 ?
+	private boolean integrateDiscord = true;
+
 	private String ram = String.valueOf(Math.min(MAX_RAM, getMaxRam() - getMaxRam() / 4)); //GB
 
 	private Settings() throws IOException {
 		if (Files.notExists(SETTINGS_PATH)) return;
 
 		final List<String> strings = Files.readAllLines(SETTINGS_PATH);
-		if (strings.size() == 2) {
-			load(strings);
-		} else {
-			Files.deleteIfExists(SETTINGS_PATH);
-			System.err.println("WARN : Invalid settings file, deleting file");
-		}
+		load(strings);
 	}
 
 	/**
@@ -59,8 +55,16 @@ public class Settings {
 		return NSFW;
 	}
 
+	public boolean doesIntegrateDiscord() {
+		return integrateDiscord;
+	}
+
 	public void setNSFW(boolean NSFW) {
 		this.NSFW = NSFW;
+	}
+
+	public void setIntegrateDiscord(boolean integrateDiscord) {
+		this.integrateDiscord = integrateDiscord;
 	}
 
 	public String getRam() {
@@ -72,11 +76,12 @@ public class Settings {
 	}
 
 	private void load(List<String> strings) {
-		NSFW = Boolean.parseBoolean(strings.get(0));
-		ram = strings.get(1);
+		if (strings.size() >= 1) NSFW = Boolean.parseBoolean(strings.get(0));
+		if (strings.size() >= 2) ram = strings.get(1);
+		if (strings.size() >= 3) integrateDiscord = Boolean.parseBoolean(strings.get(2));
 	}
 
 	public void save() throws IOException {
-		Files.writeString(SETTINGS_PATH, String.join("\n", String.valueOf(NSFW), ram), CREATE, TRUNCATE_EXISTING);
+		Files.writeString(SETTINGS_PATH, String.join("\n", String.valueOf(NSFW), ram, String.valueOf(integrateDiscord)), CREATE, TRUNCATE_EXISTING);
 	}
 }

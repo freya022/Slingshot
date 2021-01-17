@@ -182,6 +182,18 @@ public class SlingshotTask extends IOOperation {
 			downloadGameFiles(gameChecker.getDamagedFiles(), gameChecker);
 		}
 
+		setState("Tweaking Rich Presence...");
+		final Path modsPath = Main.getModsPath(modpackName);
+		final Optional<Path> mod = Files.walk(modsPath, 1).filter(p -> p.toString().contains("slingshot-rich-presence")).findFirst();
+		if (mod.isPresent()) {
+			final Path srpPath = mod.get();
+			if (Settings.getInstance().doesIntegrateDiscord()) {
+				Files.move(srpPath, IOUtils.replaceExtension(srpPath, "jar"), StandardCopyOption.ATOMIC_MOVE);
+			} else {
+				Files.move(srpPath, IOUtils.replaceExtension(srpPath, "disabled"), StandardCopyOption.ATOMIC_MOVE);
+			}
+		}
+
 		setState("Starting game...");
 
 		final String commandLine = createCommandLine();

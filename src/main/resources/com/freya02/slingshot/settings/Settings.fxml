@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXSlider?>
-<?import com.jfoenix.controls.JFXToggleButton?>
+<?import com.jfoenix.controls.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
@@ -14,6 +12,11 @@
          <VBox.margin>
             <Insets />
          </VBox.margin>
+         <padding>
+            <Insets bottom="-5.0" top="-5.0" />
+         </padding>
+      </JFXToggleButton>
+      <JFXToggleButton fx:id="discordToggle" contentDisplay="RIGHT" focusTraversable="false" selected="true" text="Discord Rich Presence" toggleColor="#008744" toggleLineColor="#0f9b58">
          <padding>
             <Insets bottom="-5.0" top="-5.0" />
          </padding>
