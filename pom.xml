@@ -62,7 +62,7 @@
                         <nativeImageArg>-H:-CheckToolchain</nativeImageArg>
                         <nativeImageArg>-H:ReflectionConfigurationFiles="${project.basedir}\SVMFX\Configs\reflect-config.json","${project.basedir}\SVMFX\Configs\reflect-config-2.json"</nativeImageArg>
                         <nativeImageArg>-H:ResourceConfigurationFiles="${project.basedir}\SVMFX\Configs\resource-config.json"</nativeImageArg>
-                        <nativeImageArg>-H:JNIConfigurationFiles="${project.basedir}\SVMFX\Configs\jni-config.json","${project.basedir}\SVMFX\Configs\jni-config-2.json"</nativeImageArg>
+                        <nativeImageArg>-H:JNIConfigurationFiles="${project.basedir}\SVMFX\Configs\jni-config.json"</nativeImageArg>
                         <nativeImageArg>--initialize-at-build-time=com.freya02.slingshot.AOT,com.freya02.slingshot.auth.AuthController</nativeImageArg>
                         <nativeImageArg>--allow-incomplete-classpath</nativeImageArg>
                     </nativeImageArgs>
