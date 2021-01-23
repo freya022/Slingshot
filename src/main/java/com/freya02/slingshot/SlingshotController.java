@@ -26,10 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -85,7 +82,7 @@ public class SlingshotController extends LazyWindow {
 
 	private final SimpleBooleanProperty showButtons = new SimpleBooleanProperty(true);
 
-	private final Map<String, String[]> modpackToVersionMap = new HashMap<>();
+	private final Map<String, List<String>> modpackToVersionMap = new HashMap<>();
 
 	@Override
 	protected void onInitialized() {
@@ -269,7 +266,16 @@ public class SlingshotController extends LazyWindow {
 
 				for (String modpackName : modpacks) {
 					es.submit(() -> {
-						modpackToVersionMap.put(modpackName, listFolder0("/Versions/" + modpackName));
+						final String[] versions = listFolder0("/Versions/" + modpackName);
+						final List<String> workingVersions = new ArrayList<>();
+						for (String version : versions) {
+							final String[] folders = listFolder0(String.format("/Versions/%s/%s", modpackName, version));
+							if (Arrays.asList(folders).contains("Files")) {
+								workingVersions.add(version);
+							}
+						}
+
+						modpackToVersionMap.put(modpackName, workingVersions);
 					});
 				}
 
@@ -294,7 +300,7 @@ public class SlingshotController extends LazyWindow {
 				((AnchorPane) spinner.getParent()).getChildren().remove(spinner);
 
 				modpackChoiceBox.valueProperty().addListener((x, y, newV) -> {
-					final String[] versions = modpackToVersionMap.get(newV);
+					final List<String> versions = modpackToVersionMap.get(newV);
 
 					if (versions != null) {
 						final ObservableList<String> items = versionChoiceBox.getItems();
@@ -306,7 +312,7 @@ public class SlingshotController extends LazyWindow {
 							if (items.contains(versionName)) {
 								versionChoiceBox.setValue(versionName);
 							} else {
-								versionChoiceBox.setValue(versions[versions.length - 1]);
+								versionChoiceBox.setValue(versions.get(versions.size() - 1));
 							}
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -324,9 +330,9 @@ public class SlingshotController extends LazyWindow {
 				if (modpackNames.length > 0) {
 					modpackChoiceBox.setValue(modpackNames[0]);
 
-					final String[] versions = modpackToVersionMap.get(modpackNames[0]);
-					if (versions != null && versions.length > 0) {
-						versionChoiceBox.setValue(versions[0]);
+					final List<String> versions = modpackToVersionMap.get(modpackNames[0]);
+					if (versions != null && versions.size() > 0) {
+						versionChoiceBox.setValue(versions.get(0));
 					}
 				}
 
