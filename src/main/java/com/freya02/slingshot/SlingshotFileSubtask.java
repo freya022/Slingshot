@@ -48,7 +48,7 @@ public abstract class SlingshotFileSubtask {
 	}
 
 	protected final void downloadFileFromDropbox(Path osPath, String dropboxPath, long fileTime) throws IOException {
-		System.out.println("Downloading " + dropboxPath + " to " + osPath);
+		Logger.info("Downloading " + dropboxPath + " to " + osPath);
 		Files.createDirectories(osPath.getParent());
 		downloadFile0(dropboxPath, osPath.toString());
 		Files.setLastModifiedTime(osPath, FileTime.fromMillis(fileTime));

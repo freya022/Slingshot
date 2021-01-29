@@ -1,5 +1,6 @@
 package com.freya02.slingshot.settings;
 
+import com.freya02.slingshot.Logger;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
@@ -57,7 +58,7 @@ public class SettingsController extends JFXDialog {
 		try {
 			settings.save();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.handleError(e);
 		}
 
 		close();

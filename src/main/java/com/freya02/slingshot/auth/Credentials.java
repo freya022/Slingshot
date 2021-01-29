@@ -1,5 +1,7 @@
 package com.freya02.slingshot.auth;
 
+import com.freya02.slingshot.Logger;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
@@ -34,7 +36,7 @@ public class Credentials {
 			load(strings);
 		} else {
 			Files.deleteIfExists(CREDENTIALS_PATH);
-			System.err.println("WARN : Invalid credentials file, deleting file");
+			Logger.warn("Invalid credentials file, deleting file");
 		}
 	}
 

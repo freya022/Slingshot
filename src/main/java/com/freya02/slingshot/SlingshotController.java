@@ -143,7 +143,7 @@ public class SlingshotController extends LazyWindow {
 
 			Main.startLauncher();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.handleError(e);
 		}
 	}
 
@@ -157,7 +157,7 @@ public class SlingshotController extends LazyWindow {
 			final SettingsController controller = SettingsController.createController();
 			controller.show((StackPane) this.getWindow().getRoot());
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.handleError(e);
 		}
 	}
 
@@ -172,7 +172,7 @@ public class SlingshotController extends LazyWindow {
 
 			slingshotTask.start();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.handleError(e);
 			showButtons.set(true);
 		}
 	}
@@ -192,7 +192,7 @@ public class SlingshotController extends LazyWindow {
 				usernameLabel.setText(username);
 				headView.setImage(new Image(PROFILE_PICTURE_PATH.toUri().toURL().toString(), true));
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logger.handleError(e);
 			}
 		}
 
@@ -250,7 +250,7 @@ public class SlingshotController extends LazyWindow {
 
 			saveImage0(PROFILE_PICTURE_PATH.toString(), pixels, 32, 32);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.handleError(e);
 		}
 	}
 
@@ -315,10 +315,10 @@ public class SlingshotController extends LazyWindow {
 								versionChoiceBox.setValue(versions.get(versions.size() - 1));
 							}
 						} catch (IOException e) {
-							e.printStackTrace();
+							Logger.handleError(e);
 						}
 					} else {
-						System.err.println("Modpack versions is null for " + newV);
+						Logger.error("Modpack versions is null for " + newV);
 					}
 				});
 
@@ -356,7 +356,7 @@ public class SlingshotController extends LazyWindow {
 				}
 			});
 		} catch (IOException | InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			Logger.handleError(e);
 		}
 	}
 }

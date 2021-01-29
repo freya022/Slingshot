@@ -81,7 +81,7 @@ public class SlingshotTask extends IOOperation {
 			try {
 				run();
 			} catch (IOException | InterruptedException e) {
-				e.printStackTrace();
+				Logger.handleError(e);
 			}
 		}).start();
 	}
@@ -215,8 +215,8 @@ public class SlingshotTask extends IOOperation {
 			setState("Calculating changes...");
 			final List<String> oldList = getFileList(oldTempFile);
 
-			System.out.println(oldList.size() + " files to remove :");
-			oldList.forEach(System.out::println);
+			Logger.info(oldList.size() + " files to remove :");
+			oldList.forEach(Logger::info);
 
 			setState("Deleting old version...");
 			setWorkDone(0); //Reset progress from download

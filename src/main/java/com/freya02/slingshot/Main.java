@@ -2,11 +2,10 @@ package com.freya02.slingshot;
 
 import com.freya02.slingshot.auth.AuthController;
 import com.freya02.slingshot.auth.Credentials;
+import com.freya02.ui.UILib;
 import javafx.application.Platform;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -19,6 +18,16 @@ public class Main {
 	public static final Path PROFILE_USERNAME_PATH = MINECRAFT_PATH.resolve("username.txt");
 	public static final Path PROFILE_PICTURE_PATH = MINECRAFT_PATH.resolve("picture.png");
 	public static final Path SETTINGS_PATH = MINECRAFT_PATH.resolve("settings.txt");
+
+	static {
+		try {
+			Files.createDirectories(MINECRAFT_PATH);
+			Logger.setupLog(MINECRAFT_PATH.resolve("logs.log"));
+		} catch (IOException e) {
+			UILib.displayError(e);
+			System.exit(-9);
+		}
+	}
 
 	public static Path getGamePath(String modpackName) {
 		return MINECRAFT_PATH.resolve("Versions").resolve(modpackName);
@@ -43,23 +52,13 @@ public class Main {
 
 	public static void main(String[] args) {
 		try {
-			Files.createDirectories(MINECRAFT_PATH);
-
-			final PrintStream out = new PrintStream(
-					new BufferedOutputStream(
-							Files.newOutputStream(MINECRAFT_PATH.resolve("logs.log"))
-					)
-			, true);
-			System.setOut(out);
-			System.setErr(out);
-
 			Platform.setImplicitExit(false);
 
 			AOT.init();
 
 			startLauncher();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.handleError(e);
 			System.exit(-1);
 		}
 	}

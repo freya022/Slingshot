@@ -64,9 +64,9 @@ public class SlingshotAssetsSubtask extends SlingshotFileSubtask {
 	@Override
 	void downloadFiles() throws InterruptedException {
 		final List<Path> damagedFiles = checkResults.getDamagedFiles();
-		System.out.println("Damaged assets files :");
+		Logger.info("Damaged assets files :");
 		for (Path damagedFile : damagedFiles) {
-			System.out.println(damagedFile);
+			Logger.info(damagedFile);
 		}
 
 		setState("Downloading assets file...");
@@ -83,7 +83,7 @@ public class SlingshotAssetsSubtask extends SlingshotFileSubtask {
 				try {
 					downloadFileFromDropbox(osPath, dropboxPath, checkResults.getDate(osPath.toString()));
 				} catch (IOException e) {
-					e.printStackTrace();
+					Logger.handleError(e);
 				}
 			});
 		}

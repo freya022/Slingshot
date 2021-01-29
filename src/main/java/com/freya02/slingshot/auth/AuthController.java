@@ -1,5 +1,6 @@
 package com.freya02.slingshot.auth;
 
+import com.freya02.slingshot.Logger;
 import com.freya02.ui.UILib;
 import com.freya02.ui.window.CloseHandler;
 import com.freya02.ui.window.LazyWindow;
@@ -116,7 +117,7 @@ public class AuthController extends LazyWindow {
 			} catch (IOException ignored) {
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				Logger.handleError(e);
 			} finally {
 				working.set(false);
 			}

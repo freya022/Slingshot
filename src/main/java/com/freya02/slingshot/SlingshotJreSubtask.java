@@ -73,9 +73,9 @@ public class SlingshotJreSubtask extends SlingshotFileSubtask {
 	@Override
 	void downloadFiles() throws InterruptedException, IOException {
 		final List<Path> damagedFiles = checkResults.getDamagedFiles();
-		System.out.println("Damaged JRE files :");
+		Logger.info("Damaged JRE files :");
 		for (Path damagedFile : damagedFiles) {
-			System.out.println(damagedFile);
+			Logger.info(damagedFile);
 		}
 
 		setState("Downloading JRE file...");
@@ -100,7 +100,7 @@ public class SlingshotJreSubtask extends SlingshotFileSubtask {
 					try {
 						downloadFileFromDropbox(osPath, dropboxPath, infos.getDate(osPath.toString()));
 					} catch (IOException e) {
-						e.printStackTrace();
+						Logger.handleError(e);
 					}
 				});
 			}
