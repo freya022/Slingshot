@@ -53,7 +53,7 @@ public class Logger {
 		t.printStackTrace(printStream);
 
 		final String stackTrace = new String(out.toByteArray());
-		writer.println(stackTrace);
+		doLog("Error", stackTrace);
 
 		final Runnable code = () -> new ErrorScene("An unexpected exception occurred", stackTrace).showAndWait();
 
