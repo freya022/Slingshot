@@ -101,6 +101,8 @@ public class AOT {
 
 	public static ByteArrayInputStream getRandomBackgroundBytes() {
 		int max = Settings.getInstance().isNSFW() ? backgroundBytes.size() : backgroundBytes.size() - nsfwOffset;
-		return backgroundBytes.get(new Random().nextInt(max));
+		final ByteArrayInputStream inputStream = backgroundBytes.get(new Random().nextInt(max));
+		inputStream.reset();
+		return inputStream;
 	}
 }
