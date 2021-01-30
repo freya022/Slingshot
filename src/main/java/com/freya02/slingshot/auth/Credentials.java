@@ -53,11 +53,11 @@ public class Credentials {
 	}
 
 	public boolean isValid() {
-		if (!username.isBlank() && !uuid.equals("0") && clientToken.equals("0") && accessToken.equals("0")) {
+		if (!username.isBlank() && !uuid.equals("") && clientToken.equals("0") && accessToken.equals("0")) {
 			return true;
 		}
 
-		return !username.isBlank() && !uuid.equals("0") && !clientToken.equals("0") && !accessToken.equals("0");
+		return !username.isBlank() && !uuid.equals("") && !clientToken.equals("0") && !accessToken.equals("0");
 	}
 
 	public String getUsername() {

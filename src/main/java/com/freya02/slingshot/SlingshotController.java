@@ -24,6 +24,8 @@ import javafx.scene.paint.Color;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -196,23 +198,39 @@ public class SlingshotController extends LazyWindow {
 			}
 		}
 
-		new Thread(this::refreshUser).start();
+		new Thread(() -> {
+			try {
+				refreshUser();
+			} catch (IOException e) {
+				Logger.handleError(e);
+			}
+		}).start();
 	}
 
-	private void refreshUser() {
-		final byte[] bytes = getSkinImage0(Credentials.getInstance().getUuid());
-		int index = -1;
-		for (int i = 0, bytesLength = bytes.length; i < bytesLength; i++) {
-			byte b = bytes[i];
-
-			if (b == ';') {
-				index = i;
-				break;
+	private void refreshUser() throws IOException {
+		final Credentials credentials = Credentials.getInstance();
+		final String username;
+		final byte[] imgBytes;
+		if (credentials.getUuid().equals("0")) {
+			username = credentials.getUsername();
+			try (InputStream stream = new URL("http://assets.mojang.com/SkinTemplates/steve.png").openStream()) {
+				imgBytes = stream.readAllBytes();
 			}
-		}
+		} else {
+			final byte[] bytes = getSkinImage0(credentials.getUuid());
+			int index = -1;
+			for (int i = 0, bytesLength = bytes.length; i < bytesLength; i++) {
+				byte b = bytes[i];
 
-		final String username = new String(Arrays.copyOfRange(bytes, 0, index));
-		final byte[] imgBytes = Arrays.copyOfRange(bytes, index + 1 /* skip ; */, bytes.length);
+				if (b == ';') {
+					index = i;
+					break;
+				}
+			}
+
+			username = new String(Arrays.copyOfRange(bytes, 0, index));
+			imgBytes = Arrays.copyOfRange(bytes, index + 1 /* skip ; */, bytes.length);
+		}
 
 		try (ByteArrayInputStream byteStream = new ByteArrayInputStream(imgBytes)) {
 			final Image image = new Image(byteStream);
@@ -249,8 +267,6 @@ public class SlingshotController extends LazyWindow {
 			}
 
 			saveImage0(PROFILE_PICTURE_PATH.toString(), pixels, 32, 32);
-		} catch (Exception e) {
-			Logger.handleError(e);
 		}
 	}
 

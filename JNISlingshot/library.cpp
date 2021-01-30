@@ -168,6 +168,8 @@ size_t writeString(char* ptr, size_t size, size_t nmemb, std::string* data) {
 			nlohmann::json j = nlohmann::json::parse(writeData);
 
 			uuid = j["id"].get<std::string>();
+		} else {
+			uuid = "0";
 		}
 
 		curl_slist_free_all(headers);
