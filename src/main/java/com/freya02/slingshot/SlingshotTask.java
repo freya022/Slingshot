@@ -86,6 +86,7 @@ public class SlingshotTask extends IOOperation {
 
 	@Override
 	public void setState(String state) {
+		Logger.info("Changing state: " + state);
 		super.setState(state);
 	}
 
