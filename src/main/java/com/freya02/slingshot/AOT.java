@@ -20,6 +20,7 @@ public class AOT {
 	private static final byte[] LOADER_DLL_BYTES;
 	private static final byte[] MAIN_DLL_BYTES;
 	private static final byte[] ZLIB_BYTES;
+	private static final byte[] FMT_BYTES;
 	private static final byte[] LIBCURL_BYTES;
 
 	private static final List<ByteArrayInputStream> backgroundBytes;
@@ -30,12 +31,14 @@ public class AOT {
 		try (InputStream loaderDllStream = getDllStream("JNISlingshotLoader.dll");
 		     InputStream mainDllStream = getDllStream("JNISlingshot.dll");
 		     InputStream libcurlDllStream = getDllStream("libcurl.dll");
-		     InputStream zlibDllStream = getDllStream("zlib1.dll")) {
+		     InputStream zlibDllStream = getDllStream("zlib1.dll");
+		     InputStream fmtDllStream = getDllStream("fmt.dll")) {
 
 			LOADER_DLL_BYTES = loaderDllStream.readAllBytes();
 			MAIN_DLL_BYTES = mainDllStream.readAllBytes();
 			LIBCURL_BYTES = libcurlDllStream.readAllBytes();
 			ZLIB_BYTES = zlibDllStream.readAllBytes();
+			FMT_BYTES = fmtDllStream.readAllBytes();
 
 			System.out.println("Preloaded DLLs");
 
@@ -86,6 +89,7 @@ public class AOT {
 		final String mainDllPath = writeTempDll(tempDllFolder, "JNISlingshot.dll", MAIN_DLL_BYTES);
 		writeTempDll(tempDllFolder, "libcurl.dll", LIBCURL_BYTES);
 		writeTempDll(tempDllFolder, "zlib1.dll", ZLIB_BYTES);
+		writeTempDll(tempDllFolder, "fmt.dll", FMT_BYTES);
 
 		System.load(loaderDllPath);
 		addDllPath(tempDllFolder.toString());

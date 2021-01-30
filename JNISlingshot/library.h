@@ -2,11 +2,10 @@
 #define JNISLINGSHOT_LIBRARY_H
 
 #include <windows.h>
-#include "JNI/jni.h"
+#include "jni.h"
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <curl/curl.h>
 #include "json.h"
 #include "base64/base64.h"
 #include "jni_str.h"
@@ -15,6 +14,10 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
 #include "stb_image_write.h"
+
+#include <fmt/core.h>
+
+#include <curl/curl.h>
 
 #include "key.h"
 

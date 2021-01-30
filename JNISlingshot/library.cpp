@@ -160,6 +160,8 @@ size_t writeString(char* ptr, size_t size, size_t nmemb, std::string* data) {
 
 		curl_easy_perform(curl);
 
+		fmt::print("Received UUID data:\n{}\n", writeData);
+
 		std::string uuid;
 
 		if (!writeData.empty()) {
@@ -174,7 +176,7 @@ size_t writeString(char* ptr, size_t size, size_t nmemb, std::string* data) {
 		return env->NewStringUTF(uuid.c_str());
 	}
 
-	return env->NewStringUTF({});
+	return env->NewStringUTF("0");
 }
 
 [[maybe_unused]] jstring authenticate0(JNIEnv* env, jclass, jstring identifierJString, jstring passwordJString, jstring clientTokenJString) {
@@ -213,6 +215,8 @@ size_t writeString(char* ptr, size_t size, size_t nmemb, std::string* data) {
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
 
 		curl_easy_perform(curl);
+
+		fmt::print("Received authentication data:\n{}\n", writeData);
 
 		std::stringstream ss;
 
@@ -258,6 +262,8 @@ size_t writeString(char* ptr, size_t size, size_t nmemb, std::string* data) {
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
 		curl_easy_perform(curl);
+
+		fmt::print("Received skin data:\n{}\n", writeData);
 
 		std::vector<char> bytes;
 
@@ -314,6 +320,8 @@ void downloadSkin(const std::string &url, std::vector<char> &bytes) {
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &writeData);
 
 		curl_easy_perform(curl);
+
+		fmt::print("Received skin download data:\n{}\n", writeData);
 
 		bytes.insert(bytes.end(), writeData.begin(), writeData.end());
 

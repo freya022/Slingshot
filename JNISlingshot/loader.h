@@ -6,7 +6,7 @@
 #define JNISLINGSHOT_LOADER_H
 
 #include <windows.h>
-#include "JNI/jni.h"
+#include "jni.h"
 #include <string>
 
 #define addDllPath Java_com_freya02_slingshot_AOT_addDllPath
