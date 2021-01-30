@@ -6,6 +6,7 @@ import com.freya02.ui.UILib;
 import javafx.application.Platform;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -53,6 +54,11 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			Thread.setDefaultUncaughtExceptionHandler((t, e) -> Logger.handleError(e));
+
+			//Trigger a fake error handler for the native-image-agent to pick up the needed resources
+			if (ManagementFactory.getRuntimeMXBean().getInputArguments().stream().anyMatch(s -> s.contains("-agentlib:native-image-agent"))) {
+				Logger.handleError(new Throwable());
+			}
 
 			Platform.setImplicitExit(false);
 

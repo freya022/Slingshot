@@ -15,6 +15,11 @@
   "allDeclaredMethods":true
 },
 {
+  "name":"com.freya02.ui.ErrorScene",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true
+},
+{
   "name":"com.freya02.ui.window.LazyWindow",
   "allDeclaredFields":true,
   "allDeclaredMethods":true
@@ -116,6 +121,10 @@
 },
 {
   "name":"com.sun.prism.shader.DrawPgram_Color_Loader",
+  "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
+},
+{
+  "name":"com.sun.prism.shader.DrawRoundRect_Color_Loader",
   "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
 },
 {
@@ -282,6 +291,10 @@
   "allDeclaredMethods":true
 },
 {
+  "name":"javafx.scene.control.OverrunStyle",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
   "name":"javafx.scene.control.PasswordField",
   "allDeclaredMethods":true
 },
@@ -296,6 +309,12 @@
 {
   "name":"javafx.scene.control.ProgressIndicator",
   "allDeclaredMethods":true
+},
+{
+  "name":"javafx.scene.control.ScrollPane",
+  "allDeclaredMethods":true,
+  "allPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"javafx.scene.control.Separator",
@@ -372,6 +391,10 @@
   "allDeclaredMethods":true
 },
 {
+  "name":"javafx.scene.layout.Priority",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
   "name":"javafx.scene.layout.Region",
   "allDeclaredFields":true,
   "allDeclaredMethods":true
@@ -389,7 +412,9 @@
   "allPublicConstructors":true,
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
-    {"name":"setMargin","parameterTypes":["javafx.scene.Node","javafx.geometry.Insets"] }
+    {"name":"getVgrow","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"setMargin","parameterTypes":["javafx.scene.Node","javafx.geometry.Insets"] }, 
+    {"name":"setVgrow","parameterTypes":["javafx.scene.Node","javafx.scene.layout.Priority"] }
   ]
 },
 {
