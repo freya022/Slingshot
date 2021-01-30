@@ -1,7 +1,6 @@
 package com.freya02.slingshot;
 
 import com.freya02.io.IOOperation;
-import com.freya02.io.IOUtils;
 import com.freya02.slingshot.auth.Credentials;
 import com.freya02.slingshot.settings.Settings;
 import javafx.application.Platform;
@@ -10,11 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.freya02.slingshot.Main.MINECRAFT_PATH;
 
@@ -73,7 +70,8 @@ public class SlingshotTask extends IOOperation {
 				.replace("[USERNAME]", credentials.getUsername())
 				.replace("[UUID]", credentials.getUuid())
 				.replace("[ACCESS_TOKEN]", credentials.getAccessToken())
-				.replace("[MEMORY]", Settings.getInstance().getRam() + "G");
+				.replace("[MEMORY]", Settings.getInstance().getRam() + "G")
+				.replace("[SDRP_PROP]", "-Dslingshot.drp.enabled=" + Settings.getInstance().doesIntegrateDiscord());
 	}
 
 	public void start() {
@@ -159,21 +157,10 @@ public class SlingshotTask extends IOOperation {
 			gameSubtask.downloadFiles();
 		}
 
-		setState("Tweaking Rich Presence...");
-		final Path modsPath = Main.getModsPath(modpackName);
-		final Optional<Path> mod = Files.walk(modsPath, 1).filter(p -> p.toString().contains("slingshot-rich-presence")).findFirst();
-		if (mod.isPresent()) {
-			final Path srpPath = mod.get();
-			if (Settings.getInstance().doesIntegrateDiscord()) {
-				Files.move(srpPath, IOUtils.replaceExtension(srpPath, "jar"), StandardCopyOption.ATOMIC_MOVE);
-			} else {
-				Files.move(srpPath, IOUtils.replaceExtension(srpPath, "disabled"), StandardCopyOption.ATOMIC_MOVE);
-			}
-		}
-
 		setState("Starting game...");
 
 		final String commandLine = createCommandLine();
+		Logger.info("Running: " + commandLine);
 		launchGame0(javawPath.toString(), gameFolderPath.toString(), commandLine);
 
 		Platform.exit();
