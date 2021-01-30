@@ -10,17 +10,13 @@ if %errorlevel% == 9009 (
 	call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
 )
 
-set /p continue=Are you sure you want to compile and link ? (y/n) :
+cd ..
+mvn client:compile
+cd SVMFX
 
-if "%continue%" == "y" (
-	cd ..
-	mvn client:compile
-	cd SVMFX
+start /WAIT rc.exe Resources.rc
+start /WAIT cvtres.exe Resources.res
 
-	start /WAIT rc.exe Resources.rc
-	start /WAIT cvtres.exe Resources.res
-	
-	cd ..
-	mvn client:link
-	cd SVMFX
-)
+cd ..
+mvn client:link
+cd SVMFX
