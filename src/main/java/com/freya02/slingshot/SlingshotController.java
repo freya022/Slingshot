@@ -179,7 +179,12 @@ public class SlingshotController extends LazyWindow {
 		}
 	}
 
-	private static native byte[] getSkinImage0(String uuid);
+	/** Returns mojang username and skin of an <b>existing</b> player
+	 *
+	 * @param uuid UUID of the player
+	 * @return [0]: String, [1]: byte[]
+	 */
+	private static native Object[] getSkinImage0(String uuid) throws IOException;
 	private static native void openFolder0(String path);
 
 	/**
@@ -217,19 +222,10 @@ public class SlingshotController extends LazyWindow {
 				imgBytes = stream.readAllBytes();
 			}
 		} else {
-			final byte[] bytes = getSkinImage0(credentials.getUuid());
-			int index = -1;
-			for (int i = 0, bytesLength = bytes.length; i < bytesLength; i++) {
-				byte b = bytes[i];
+			final Object[] bytes = getSkinImage0(credentials.getUuid());
 
-				if (b == ';') {
-					index = i;
-					break;
-				}
-			}
-
-			username = new String(Arrays.copyOfRange(bytes, 0, index));
-			imgBytes = Arrays.copyOfRange(bytes, index + 1 /* skip ; */, bytes.length);
+			username = (String) bytes[0];
+			imgBytes = (byte[]) bytes[1];
 		}
 
 		try (ByteArrayInputStream byteStream = new ByteArrayInputStream(imgBytes)) {
@@ -270,7 +266,7 @@ public class SlingshotController extends LazyWindow {
 		}
 	}
 
-	private static native String[] listFolder0(String dropboxPath);
+	private static native String[] listFolder0(String dropboxPath) throws IOException;
 
 	private void waitForDropbox() {
 		try {
@@ -282,16 +278,21 @@ public class SlingshotController extends LazyWindow {
 
 				for (String modpackName : modpacks) {
 					es.submit(() -> {
-						final String[] versions = listFolder0("/Versions/" + modpackName);
-						final List<String> workingVersions = new ArrayList<>();
-						for (String version : versions) {
-							final String[] folders = listFolder0(String.format("/Versions/%s/%s", modpackName, version));
-							if (Arrays.asList(folders).contains("Files")) {
-								workingVersions.add(version);
+						try {
+							final String[] versions = listFolder0("/Versions/" + modpackName);
+							final List<String> workingVersions = new ArrayList<>();
+							for (String version : versions) {
+								final String[] folders = listFolder0(String.format("/Versions/%s/%s", modpackName, version));
+								if (Arrays.asList(folders).contains("Files")) {
+									workingVersions.add(version);
+								}
 							}
-						}
 
-						modpackToVersionMap.put(modpackName, workingVersions);
+							modpackToVersionMap.put(modpackName, workingVersions);
+						} catch (IOException e) {
+							Logger.handleError(e);
+							System.exit(-8);
+						}
 					});
 				}
 

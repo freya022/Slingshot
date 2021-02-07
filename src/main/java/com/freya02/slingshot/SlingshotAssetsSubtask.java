@@ -31,7 +31,13 @@ public class SlingshotAssetsSubtask extends SlingshotFileSubtask {
 	@Override
 	@NotNull
 	Thread startChecklistDownload() {
-		final Thread assetsCheckThread = new Thread(() -> downloadFile0("/AssetsCheckList.fchecks", assetsCheckListPath.toString()));
+		final Thread assetsCheckThread = new Thread(() -> {
+			try {
+				downloadFile0("/AssetsCheckList.fchecks", assetsCheckListPath.toString());
+			} catch (IOException e) {
+				Logger.handleError(e);
+			}
+		});
 		assetsCheckThread.start();
 
 		return assetsCheckThread;

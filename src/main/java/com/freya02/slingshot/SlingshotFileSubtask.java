@@ -29,11 +29,12 @@ public abstract class SlingshotFileSubtask {
 		task.setTotalWork(totalWork);
 	}
 
-	protected final void downloadFile0(String dropboxPath, String osPath) {
+	protected final void downloadFile0(String dropboxPath, String osPath) throws IOException {
+		Logger.info("Downloading " + dropboxPath + " to " + osPath, 1);
 		SlingshotTask.downloadFile0(dropboxPath, osPath, task);
 	}
 
-	protected final long getDownloadSize0(String dropboxPath) {
+	protected final long getDownloadSize0(String dropboxPath) throws IOException {
 		return SlingshotTask.getDownloadSize0(dropboxPath);
 	}
 
@@ -48,9 +49,11 @@ public abstract class SlingshotFileSubtask {
 	}
 
 	protected final void downloadFileFromDropbox(Path osPath, String dropboxPath, long fileTime) throws IOException {
-		Logger.info("Downloading " + dropboxPath + " to " + osPath);
 		Files.createDirectories(osPath.getParent());
-		downloadFile0(dropboxPath, osPath.toString());
+
+		Logger.info("Downloading " + dropboxPath + " to " + osPath, 1);
+		SlingshotTask.downloadFile0(dropboxPath, osPath.toString(), task);
+
 		Files.setLastModifiedTime(osPath, FileTime.fromMillis(fileTime));
 	}
 

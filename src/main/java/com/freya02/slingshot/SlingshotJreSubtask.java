@@ -32,7 +32,13 @@ public class SlingshotJreSubtask extends SlingshotFileSubtask {
 	@Override
 	@NotNull
 	Thread startChecklistDownload() {
-		final Thread gameCheckThread = new Thread(() -> downloadFile0("/JreCheckList.fchecks", jreCheckListPath.toString()));
+		final Thread gameCheckThread = new Thread(() -> {
+			try {
+				downloadFile0("/JreCheckList.fchecks", jreCheckListPath.toString());
+			} catch (IOException e) {
+				Logger.handleError(e);
+			}
+		});
 		gameCheckThread.start();
 
 		return gameCheckThread;
@@ -60,7 +66,7 @@ public class SlingshotJreSubtask extends SlingshotFileSubtask {
 		return Math.min(checkResults.getDamagedSize(), jreSize);
 	}
 
-	private long getJreSize() {
+	private long getJreSize() throws IOException {
 		return getDownloadSize0("/jre.zip");
 	}
 

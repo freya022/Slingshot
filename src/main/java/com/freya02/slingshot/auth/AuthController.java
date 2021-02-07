@@ -84,8 +84,8 @@ public class AuthController extends LazyWindow {
 		}
 	}
 
-	public static native String getUuid0(String username);
-	private static native String authenticate0(String username, String password, String clientToken) throws IOException;
+	public static native String getUuid0(String username) throws IOException;
+	private static native String[] authenticate0(String username, String password, String clientToken) throws IOException;
 
 	@FXML private void onLogClicked(MouseEvent event) {
 		working.set(true);
@@ -94,13 +94,12 @@ public class AuthController extends LazyWindow {
 			try {
 				final Credentials credentials = Credentials.getInstance();
 				if (emailMatcher.reset(identifierField.getText()).matches()) {
-					final String info = authenticate0(identifierField.getText(), passwordField.getText(), UUID.randomUUID().toString());
-					final String[] split = info.split(";");
+					final String[] info = authenticate0(identifierField.getText(), passwordField.getText(), UUID.randomUUID().toString());
 
-					credentials.setUsername(split[0]);
-					credentials.setUuid(split[1]);
-					credentials.setClientToken(split[2]);
-					credentials.setAccessToken(split[3]);
+					credentials.setUsername(info[0]);
+					credentials.setUuid(info[1]);
+					credentials.setClientToken(info[2]);
+					credentials.setAccessToken(info[3]);
 				} else {
 					credentials.setUsername(identifierField.getText());
 					credentials.setUuid(getUuid0(identifierField.getText()));
@@ -114,8 +113,6 @@ public class AuthController extends LazyWindow {
 					getWindow().close();
 					Platform.exitNestedEventLoop(this, null);
 				});
-			} catch (IOException ignored) {
-
 			} catch (Exception e) {
 				Logger.handleError(e);
 			} finally {

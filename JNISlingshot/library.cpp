@@ -1,364 +1,272 @@
 #include "library.h"
 
-size_t writeFunction(char* ptr, size_t size, size_t nmemb, JNIData* data) {
-	for (int i = 0; i < size * nmemb; ++i) {
-		*(data->localStream) << ptr[i];
-	}
+[[maybe_unused]] void downloadFile0(JNIEnv* env, jclass, jstring dropboxJString, jstring osJString, jobject jThis) {
+	JNI::String dropboxPath(dropboxJString);
+	JNI::String osPath(osJString);
 
-	//Only init one time, the method is the same everywhere
-	static jmethodID method = data->env->GetMethodID(data->clazz, "onWrite", "(I)V"); //Param int return void
+	try {
+		//Only init one time, the method is the same everywhere
+		static jmethodID method = env->GetMethodID(env->GetObjectClass(jThis), "onWrite", "(I)V"); //Param int return void
 
-	data->env->CallVoidMethod(data->jThis, method, size * nmemb);
+		std::ofstream out(osPath.data(), std::ios::binary);
+		size_t downloadOld = 0;
+		cpr::Response resp = cpr::Download(
+				out,
+				cpr::Url("https://content.dropboxapi.com/2/files/download"),
+				cpr::Header{{"Dropbox-API-Arg", fmt::format(R"({{"path": "{}"}})", dropboxPath.data())}},
+				cpr::Bearer(KEY),
+				cpr::ProgressCallback([&downloadOld, &jThis, &env](size_t downloadTotal, size_t downloadNow, size_t uploadTotal, size_t uploadNow) {
+					//Don't update Slingshot UI because of CPR spamming these callbacks for no reason
+					if (downloadNow == downloadOld) return true;
 
-	return size * nmemb;
-}
+					size_t progress = downloadNow - downloadOld;
+					downloadOld = downloadNow;
 
-[[maybe_unused]] void downloadFile0(JNIEnv* env, jclass clazz, jstring dropboxJString, jstring osJString, jobject jThis) {
-	jni_str dropboxJniStr(env, dropboxJString);
-	jni_str osPathJniStr(env, osJString);
+					env->CallVoidMethod(jThis, method, progress);
 
-	const char *dropboxPath = dropboxJniStr.data();
-	const char *osPath = osPathJniStr.data();
+					return true;
+				})
+		);
 
-	auto curl = curl_easy_init();
-	if (curl) {
-		curl_easy_setopt(curl, CURLOPT_URL, "https://content.dropboxapi.com/2/files/download");
-		curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 0L);
-		curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeFunction);
-		curl_slist *headers = curl_slist_append(nullptr, getAuthorizationHeader());
-		std::stringstream ss;
-		ss << R"(Dropbox-API-Arg: {"path": ")" << dropboxPath << R"("})";
-		headers = curl_slist_append(headers, ss.str().c_str());
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-		//Allows download of text & binary files. Lol ?
-		std::ofstream t(osPath, std::ios::binary);
-
-		JNIData jniData{env, clazz, jThis, &t};
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &jniData);
-
-		curl_easy_perform(curl);
-
-		curl_slist_free_all(headers);
-		curl_easy_cleanup(curl); //Do this at last, "url" is deleted after this
+		if (resp.status_code != 200) {
+			throw std::runtime_error(fmt::format("Dropbox download status code: {}", resp.status_code));
+		}
+	} catch (const std::exception& e) {
+		fmt::print("Exception: {}", e.what());
+		env->ThrowNew(env->FindClass("java/io/IOException"),
+					  fmt::format("Exception while downloading dropbox file {}: {}", dropboxPath.data(), e.what()).c_str());
 	}
 }
 
 [[maybe_unused]] jlong getDownloadSize0(JNIEnv* env, jclass, jstring dropboxJString) {
-	jni_str dropboxJniStr(env, dropboxJString);
+	JNI::String dropboxPath(dropboxJString);
 
-	const char *dropboxPath = dropboxJniStr.data();
+	try {
+		cpr::Response resp = cpr::Head(
+				cpr::Url("https://content.dropboxapi.com/2/files/download"),
+				cpr::Header{{"Dropbox-API-Arg", fmt::format(R"({{"path": "{}"}})", dropboxPath.data())}},
+				cpr::Bearer(KEY)
+		);
 
-	auto curl = curl_easy_init();
-	if (curl) {
-		//Standard connection
-		curl_easy_setopt(curl, CURLOPT_URL, "https://content.dropboxapi.com/2/files/download");
-		curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 0L);
-		curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
-		curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);
+		if (resp.status_code != 200) {
+			throw std::runtime_error(fmt::format("Get download size status code: {}", resp.status_code));
+		}
 
-		//Set the headers
-		curl_slist *headers = curl_slist_append(nullptr, getAuthorizationHeader());
-		std::stringstream ss;
-		ss << R"(Dropbox-API-Arg: {"path": ")" << dropboxPath << R"("})";
-		headers = curl_slist_append(headers, ss.str().c_str());
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-		curl_easy_perform(curl);
-
-		curl_off_t size;
-		curl_easy_getinfo(curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &size);
-
-		curl_slist_free_all(headers);
-		curl_easy_cleanup(curl); //Do this at last, "url" is deleted after this
-
-		return size;
+		return std::stoll(resp.header["Content-Length"]);
+	} catch (const std::exception& e) {
+		fmt::print("Exception: {}", e.what());
+		env->ThrowNew(env->FindClass("java/io/IOException"),
+					  fmt::format("Exception while downloading dropbox file {}: {}", dropboxPath.data(), e.what()).c_str());
 	}
 
 	return -1;
 }
 
-
-size_t writeString(char* ptr, size_t size, size_t nmemb, std::string* data) {
-	data->append(ptr, size * nmemb);
-
-	return size * nmemb;
-}
-
 [[maybe_unused]] jobjectArray listFolder0(JNIEnv* env, jclass, jstring dropboxJString) {
-	jni_str dropboxJniStr(env, dropboxJString);
+	JNI::String dropboxPath(dropboxJString);
 
-	const char *dropboxPath = dropboxJniStr.data();
+	try {
+		std::string args = fmt::format(R"(
+		{{
+			"path": "{}",
+			"recursive": false,
+			"include_deleted": false,
+			"include_has_explicit_shared_members": false,
+			"include_mounted_folders": true,
+			"include_non_downloadable_files": true
+		}})", dropboxPath.data());
 
-	std::stringstream dataStream;
-	dataStream << R"({"path": ")";
-	dataStream << dropboxPath;
-	dataStream << R"(","recursive": false,"include_media_info": false,"include_deleted": false,"include_has_explicit_shared_members": false,"include_mounted_folders": true,"include_non_downloadable_files": true})";
+		cpr::Response resp = cpr::Post(
+				cpr::Url("https://api.dropboxapi.com/2/files/list_folder"),
+				cpr::Bearer(KEY),
+				cpr::Header{{"Content-Type", "application/json"}},
+				cpr::Body{args}
+		);
 
-	auto curl = curl_easy_init();
-	if (curl) {
-		//Standard connection
-		curl_easy_setopt(curl, CURLOPT_URL, "https://api.dropboxapi.com/2/files/list_folder");
-		curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 0L);
-		curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeString);
-		std::string writeData;
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &writeData);
-
-		//Set the headers
-		curl_slist *headers = curl_slist_append(nullptr, getAuthorizationHeader());
-		headers = curl_slist_append(headers, "Content-Type: application/json");
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-		const std::string &basicString = dataStream.str();
-		const char *string = basicString.c_str();
-		//Set the data
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, string);
-
-		curl_easy_perform(curl);
-
-		nlohmann::json j = nlohmann::json::parse(writeData);
-		auto arr = env->NewObjectArray(j["entries"].size(), env->FindClass("java/lang/String"), nullptr);
-		int i = 0;
-		for (const auto& entry : j["entries"]) {
-			auto entryName = entry["name"].get<std::string>();
-
-			env->SetObjectArrayElement(arr, i, env->NewStringUTF(entryName.c_str()));
-			i++;
+		if (resp.status_code != 200) {
+			throw std::runtime_error(fmt::format("Status code: {}", resp.status_code));
 		}
 
-		curl_slist_free_all(headers);
-		curl_easy_cleanup(curl); //Do this at last, "url" is deleted after this
+		nlohmann::json j = nlohmann::json::parse(resp.text);
+		auto entries = j["entries"];
+		auto arr = env->NewObjectArray(entries.size(), env->FindClass("java/lang/String"), nullptr);
+		for (int i = 0; i < entries.size(); i++) {
+			auto entryName = entries[i]["name"].get<std::string>();
+
+			env->SetObjectArrayElement(arr, i, env->NewStringUTF(entryName.c_str()));
+		}
 
 		return arr;
+	} catch (const std::exception& e) {
+		fmt::print("Exception: {}", e.what());
+		env->ThrowNew(env->FindClass("java/io/IOException"),
+					  fmt::format("Exception while listing Dropbox folders in '{}': {}", dropboxPath.data(), e.what()).c_str());
 	}
 
-	return env->NewObjectArray(0, env->FindClass("java/lang/String"), nullptr);
+	return nullptr;
 }
 
 [[maybe_unused]] jstring getUuid0(JNIEnv* env, jclass, jstring usernameJString) {
-	jni_str usernameJniStr(env, usernameJString);
+	JNI::String username(usernameJString);
 
-	const char *username = usernameJniStr.data();
+	try {
+		cpr::Response resp = cpr::Get(
+				cpr::Url(std::string("https://api.mojang.com/users/profiles/minecraft/") + username.data()),
+				cpr::Header{{"Content-Type", "application/json"}}
+		);
 
-	auto curl = curl_easy_init();
-	if (curl) {
-		//Standard connection
-		const auto &string = std::string("https://api.mojang.com/users/profiles/minecraft/") + username;
-		const char *url = string.c_str();
-
-		curl_easy_setopt(curl, CURLOPT_URL, url);
-		curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 0L);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeString);
-		std::string writeData;
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &writeData);
-
-		//Set the headers
-		curl_slist *headers = curl_slist_append(nullptr, "Content-Type: application/json");
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-		curl_easy_perform(curl);
-
-		fmt::print("Received UUID data:\n{}\n", writeData);
-
-		std::string uuid;
-
-		if (!writeData.empty()) {
-			nlohmann::json j = nlohmann::json::parse(writeData);
-
-			uuid = j["id"].get<std::string>();
-		} else {
-			uuid = "0";
+		if (resp.status_code == 204) {
+			return env->NewStringUTF("0");
 		}
 
-		curl_slist_free_all(headers);
-		curl_easy_cleanup(curl); //Do this at last, "url" is deleted after this
+		if (resp.status_code != 200) {
+			throw std::runtime_error(fmt::format("Status code: {}", resp.status_code));
+		}
+
+		nlohmann::json json = nlohmann::json::parse(resp.text);
+		std::string uuid = json["id"];
 
 		return env->NewStringUTF(uuid.c_str());
+	} catch (const std::exception& e) {
+		fmt::print("Exception: {}", e.what());
+		env->ThrowNew(env->FindClass("java/io/IOException"),
+					  fmt::format("Exception while getting UUID for username '{}': {}", username.data(), e.what()).c_str());
 	}
 
-	return env->NewStringUTF("0");
+	return nullptr;
 }
 
-[[maybe_unused]] jstring authenticate0(JNIEnv* env, jclass, jstring identifierJString, jstring passwordJString, jstring clientTokenJString) {
-	jni_str identifierJniStr(env, identifierJString);
-	jni_str passwordJniStr(env, passwordJString);
-	jni_str clientTokenJniStr(env, clientTokenJString);
+[[maybe_unused]] jobjectArray authenticate0(JNIEnv* env, jclass, jstring identifierJString, jstring passwordJString, jstring clientTokenJString) {
+	JNI::String identifier(identifierJString);
+	JNI::String password(passwordJString);
+	JNI::String clientToken(clientTokenJString);
 
-	const char *identifier = identifierJniStr.data();
-	const char *password = passwordJniStr.data();
-	const char *clientToken = clientTokenJniStr.data();
+	try {
+		const std::string payloadFormat = R"(
+		{{
+			"agent": {{
+				"name": "Minecraft",
+				"version": 1
+			}},
+			"username": "{}",
+			"password": "{}",
+			"clientToken": "{}",
+			"requestUser": true
+		}})";
 
-	auto curl = curl_easy_init();
-	if (curl) {
-		//Standard connection
-		curl_easy_setopt(curl, CURLOPT_URL, "https://authserver.mojang.com/authenticate");
-		curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 0L);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeString);
-		std::string writeData;
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &writeData);
+		std::string payload = fmt::format(payloadFormat, identifier.data(), password.data(), clientToken.data());
 
-		//Set the headers
-		curl_slist *headers = curl_slist_append(nullptr, "Content-Type: application/json");
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+		cpr::Response resp = cpr::Post(
+				cpr::Url("https://authserver.mojang.com/authenticate"),
+				cpr::Header{{"Content-Type", "application/json"}},
+				cpr::Body(payload)
+		);
 
-		std::string payload = "{\n"
-						"            \"agent\": {\n"
-						"                \"name\": \"Minecraft\",\n"
-						"                \"version\": 1\n"
-						"            },\n"
-						"            \"username\": \"" + std::string(identifier) + "\",\n"
-						"            \"password\": \"" + std::string(password) + "\",\n"
-						"            \"clientToken\": \"" + std::string(clientToken) + "\",\n"
-						"            \"requestUser\": true\n"
-						"        }";
-
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
-
-		curl_easy_perform(curl);
-
-		fmt::print("Received authentication data:\n{}\n", writeData);
-
-		std::stringstream ss;
-
-		if (!writeData.empty()) {
-			nlohmann::json j = nlohmann::json::parse(writeData);
-
-			if (j.contains("selectedProfile")) {
-				ss << j["selectedProfile"]["name"].get<std::string>() << ';' << j["selectedProfile"]["id"].get<std::string>() << ';' << j["clientToken"].get<std::string>() << ';' << j["accessToken"].get<std::string>();
-			} else {
-				throwIOException(env, "Invalid credentials : " + writeData);
-				return nullptr;
-			}
+		if (resp.status_code != 200) {
+			throw std::runtime_error(fmt::format("Status code: {}", resp.status_code));
 		}
 
-		curl_slist_free_all(headers);
-		curl_easy_cleanup(curl); //Do this at last, "url" is deleted after this
+		nlohmann::json j = nlohmann::json::parse(resp.text);
+		const std::string &username = j["selectedProfile"]["name"];
+		const std::string &uuid = j["selectedProfile"]["id"];
+		const std::string &newClientToken = j["clientToken"];
+		const std::string &accessToken = j["accessToken"];
 
-		return env->NewStringUTF(ss.str().c_str());
+		jobjectArray oArray = env->NewObjectArray(4, env->FindClass("java/lang/String"), nullptr);
+		env->SetObjectArrayElement(oArray, 0, env->NewStringUTF(username.c_str()));
+		env->SetObjectArrayElement(oArray, 1, env->NewStringUTF(uuid.c_str()));
+		env->SetObjectArrayElement(oArray, 2, env->NewStringUTF(newClientToken.c_str()));
+		env->SetObjectArrayElement(oArray, 3, env->NewStringUTF(accessToken.c_str()));
+
+		return oArray;
+	} catch (const std::exception &e) {
+		fmt::print("Exception: {}", e.what());
+		env->ThrowNew(env->FindClass("java/io/IOException"),
+					  fmt::format("Exception while authentication: {}", e.what()).c_str());
 	}
 
-	return env->NewStringUTF({});
+	return nullptr;
 }
 
-[[maybe_unused]] jbyteArray getSkinImage0(JNIEnv* env, jclass, jstring uuidJString) {
-	jni_str uuidJniStr(env, uuidJString);
+[[maybe_unused]] jobjectArray getSkinImage0(JNIEnv* env, jclass, jstring uuidJString) {
+	JNI::String uuid(uuidJString);
 
-	const char *uuid = uuidJniStr.data();
+	try {
+		const std::string sessionserverUrl = std::string("https://sessionserver.mojang.com/session/minecraft/profile/") + uuid.data();
 
-	auto curl = curl_easy_init();
-	if (curl) {
-		//Standard connection
-		const auto &string = std::string("https://sessionserver.mojang.com/session/minecraft/profile/") + uuid;
-		const char *url = string.c_str();
+		cpr::Response resp = cpr::Get(
+				cpr::Url(sessionserverUrl),
+				cpr::Header{{"Content-Type", "application/json"}}
+		);
 
-		curl_easy_setopt(curl, CURLOPT_URL, url);
-		curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 0L);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeString);
-		std::string writeData;
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &writeData);
-
-		//Set the headers
-		curl_slist *headers = curl_slist_append(nullptr, "Content-Type: application/json");
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-		curl_easy_perform(curl);
-
-		fmt::print("Received skin data:\n{}\n", writeData);
-
-		std::vector<char> bytes;
-
-		if (!writeData.empty()) {
-			nlohmann::json j = nlohmann::json::parse(writeData);
-
-			if (j.contains("properties")) {
-				for (char c : j["name"].get<std::string>()) {
-					bytes.emplace_back(c);
-				}
-				bytes.emplace_back(';');
-
-				for (const auto& item : j["properties"]) {
-					if (item.contains("name") && item["name"] == "textures") {
-						std::string base64json = item["value"];
-
-						const std::string &decodedJson = base64_decode(base64json, false);
-
-						nlohmann::json j2 = nlohmann::json::parse(decodedJson);
-						if (j2.contains("textures") && j2["textures"].contains("SKIN")) {
-							if (j2["textures"]["SKIN"].contains("url")) {
-								downloadSkin(j2["textures"]["SKIN"]["url"], bytes);
-							}
-						}
-
-						break;
-					}
-				}
-			}
+		if (resp.status_code != 200) {
+			throw std::runtime_error(fmt::format("Profile GET status code: {}", resp.status_code));
 		}
 
-		curl_slist_free_all(headers);
-		curl_easy_cleanup(curl); //Do this at last, "url" is deleted after this
-		
-		jbyteArray pArray = env->NewByteArray(bytes.size());
-		env->SetByteArrayRegion(pArray, 0, bytes.size(), reinterpret_cast<const jbyte *>(bytes.data()));
-		return pArray;
+		nlohmann::json j = nlohmann::json::parse(resp.text);
+		const std::string& username = j["name"];
+		const std::string& skinjson = base64_decode(j["properties"][0]["value"].get<std::string>(), false);
+
+		nlohmann::json j2 = nlohmann::json::parse(skinjson);
+		const std::string& url = j2["textures"]["SKIN"]["url"];
+
+		std::vector<char> skinBytes;
+		skinBytes.reserve(10240);
+		cpr::Response downloadResp = cpr::Download(cpr::WriteCallback([&skinBytes](std::string_view str) {
+			skinBytes.insert(skinBytes.end(), str.begin(), str.end());
+
+			return true;
+		}), cpr::Url(url));
+
+		if (downloadResp.status_code != 200) {
+			throw std::runtime_error(fmt::format("Skin download status code: {}", downloadResp.status_code));
+		}
+
+		jstring jname = env->NewStringUTF(username.c_str());
+		jobjectArray oArray = env->NewObjectArray(2, env->FindClass("java/lang/Object"), nullptr);
+
+		jbyteArray pArray = env->NewByteArray(skinBytes.size());
+		env->SetByteArrayRegion(pArray, 0, skinBytes.size(), reinterpret_cast<const jbyte *>(skinBytes.data()));
+
+		env->SetObjectArrayElement(oArray, 0, jname);
+		env->SetObjectArrayElement(oArray, 1, pArray);
+
+		return oArray;
+	} catch (const std::exception& e) {
+		fmt::print("Exception: {}", e.what());
+		env->ThrowNew(env->FindClass("java/io/IOException"),
+				fmt::format("Exception while downloading skin of uuid '{}' : {}", uuid.data(), e.what()).c_str());
 	}
 
-	return env->NewByteArray(0);
+	return nullptr;
 }
 
-void downloadSkin(const std::string &url, std::vector<char> &bytes) {
-	auto curl = curl_easy_init();
-	if (curl) {
-		//Standard connection
-		const char *urlC = url.c_str();
+[[maybe_unused]] void launchGame0(JNIEnv*, jclass, jstring javawJString, jstring workingDirJString, jstring commandlineJString) {
+	JNI::String name(javawJString);
+	JNI::String line(commandlineJString);
+	JNI::String directory(workingDirJString);
 
-		curl_easy_setopt(curl, CURLOPT_URL, urlC);
-		curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 0L);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeString);
-
-		std::string writeData;
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &writeData);
-
-		curl_easy_perform(curl);
-
-		fmt::print("Received skin download data:\n{}\n", writeData);
-
-		bytes.insert(bytes.end(), writeData.begin(), writeData.end());
-
-		curl_easy_cleanup(curl); //Do this at last, "url" is deleted after this
-	}
-}
-
-[[maybe_unused]] void launchGame0(JNIEnv* env, jclass, jstring javawJString, jstring workingDirJString, jstring commandlineJString) {
-	jni_str javawJniStr(env, javawJString);
-	jni_str workingDirJniStr(env, workingDirJString);
-	jni_str commandlineJniStr(env, commandlineJString);
-
-	auto cmd = std::string(commandlineJniStr.data());
 	CreateProcessA(
-			javawJniStr.data(),
-			cmd.data(),
+			name.data(),
+			const_cast<char*>(line.data()),
 			nullptr,
 			nullptr,
 			FALSE,
 			NORMAL_PRIORITY_CLASS,
 			nullptr,
-			workingDirJniStr.data(),
+			directory.data(),
 			new STARTUPINFO {},
 			new PROCESS_INFORMATION {}
 	);
 }
 
-[[maybe_unused]] void openFolder0(JNIEnv* env, jclass, jstring folderPathJString) {
-	jni_str folderPathJniStr(env,  folderPathJString);
+[[maybe_unused]] void openFolder0(JNIEnv*, jclass, jstring folderPathJString) {
+	JNI::String folderPathStr(folderPathJString);
 
-	std::string folderPathA = std::string(folderPathJniStr.data());
-
-	size_t charsNeeded = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, folderPathA.data(), (int) folderPathA.size(), nullptr, 0);
-	auto* folderPath = new wchar_t[charsNeeded];
-	::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, folderPathA.data(), (int) folderPathA.size(), folderPath, charsNeeded);
+	size_t charsNeeded = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, folderPathStr, folderPathStr.length(), nullptr, 0);
+	auto* folderPath = new wchar_t[charsNeeded + 1];
+	int written = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, folderPathStr, folderPathStr.length(), folderPath, charsNeeded);
+	folderPath[written] = '\0';
 
 	PIDLIST_ABSOLUTE pidl;
 	if (SUCCEEDED(SHParseDisplayName(folderPath, nullptr, &pidl, 0, nullptr))) {
@@ -370,8 +278,6 @@ void downloadSkin(const std::string &url, std::vector<char> &bytes) {
 }
 
 [[maybe_unused]] void saveImage0(JNIEnv* env, jclass, jstring pathJString, jintArray jpixels, jint width, jint height) {
-	jni_str pathJniStr(env, pathJString);
-
 	jboolean isCopy;
 	auto* fpixels = reinterpret_cast<unsigned long *>(env->GetIntArrayElements(jpixels, &isCopy));
 
@@ -379,11 +285,10 @@ void downloadSkin(const std::string &url, std::vector<char> &bytes) {
 		Vec256::swap(reinterpret_cast<uint8_t *>(fpixels), Vec256::getMask<unsigned long>());
 	}
 
-	stbi_write_png(pathJniStr.data(), width, height, 4, pixels, width * 4);
+	JNI::String path(pathJString);
+	stbi_write_png(path, width, height, 4, fpixels, width * 4);
 
 	if (isCopy == JNI_TRUE) {
 		env->ReleaseIntArrayElements(jpixels, reinterpret_cast<jint *>(fpixels), JNI_ABORT);
 	}
-
-	delete[] pixels;
 }

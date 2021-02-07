@@ -56,8 +56,8 @@ public class SlingshotTask extends IOOperation {
 		}
 	}
 
-	static native void downloadFile0(String dropboxPath, String osPath, Object oThis);
-	static native long getDownloadSize0(String dropboxPath);
+	static native void downloadFile0(String dropboxPath, String osPath, Object oThis) throws IOException;
+	static native long getDownloadSize0(String dropboxPath) throws IOException;
 
 	private static native void launchGame0(String javaw, String workingDir, String commandline);
 
@@ -86,7 +86,6 @@ public class SlingshotTask extends IOOperation {
 
 	@Override
 	public void setState(String state) {
-		Logger.info("Changing state: " + state);
 		super.setState(state);
 	}
 
