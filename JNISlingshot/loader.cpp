@@ -1,7 +1,3 @@
-//
-// Created by L5O on 23/07/2020.
-//
-
 #include "loader.h"
 
 [[maybe_unused]] void addDllPath(JNIEnv* env, jclass, jstring jDllFolderPath) {

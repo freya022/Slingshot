@@ -1,7 +1,3 @@
-//
-// Created by L5O on 23/07/2020.
-//
-
 #ifndef JNISLINGSHOT_LOADER_H
 #define JNISLINGSHOT_LOADER_H
 
