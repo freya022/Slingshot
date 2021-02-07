@@ -12,11 +12,11 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 /*
- * Max RAM = Physical RAM - 2
+ * Max RAM = 8 GB (for minecraft itself, java compiler and profiler is not counted in, probably not native MC mem too)
  * Recommended RAM = Math.min(Max RAM, 3/4 * Physical RAM)
  */
 public class Settings {
-	public static final int MAX_RAM = 12;
+	public static final int MAX_RAM = 8;
 
 	private static Settings instance;
 	private boolean NSFW = false;
