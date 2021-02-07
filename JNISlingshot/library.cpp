@@ -375,9 +375,8 @@ void downloadSkin(const std::string &url, std::vector<char> &bytes) {
 	jboolean isCopy;
 	auto* fpixels = reinterpret_cast<unsigned long *>(env->GetIntArrayElements(jpixels, &isCopy));
 
-	auto* pixels = new unsigned long[width * height];
-	for (int i = 0; i < width * height; ++i) {
-		pixels[i] = (fpixels[i] & 0xFF00FF00) | ((fpixels[i] & 0x00FF0000) >> 16) | ((fpixels[i] & 0x000000FF) << 16);
+	for (int i = 0; i < width * height; i += Vec256::size()) {
+		Vec256::swap(reinterpret_cast<uint8_t *>(fpixels), Vec256::getMask<unsigned long>());
 	}
 
 	stbi_write_png(pathJniStr.data(), width, height, 4, pixels, width * 4);
