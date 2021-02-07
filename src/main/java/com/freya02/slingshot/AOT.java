@@ -1,5 +1,6 @@
 package com.freya02.slingshot;
 
+import com.freya02.io.IOUtils;
 import com.freya02.slingshot.settings.Settings;
 
 import java.io.ByteArrayInputStream;
@@ -9,36 +10,29 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AOT {
-	private static final boolean USE_TEST_DLL = false;
+	private static final boolean USE_DEBUG_DLL = false;
 
-	private static final byte[] LOADER_DLL_BYTES;
-	private static final byte[] MAIN_DLL_BYTES;
-	private static final byte[] ZLIB_BYTES;
-	private static final byte[] FMT_BYTES;
-	private static final byte[] LIBCURL_BYTES;
+	private static final Map<String, DLL> DLLS = new HashMap<>(5);
 
 	private static final List<ByteArrayInputStream> backgroundBytes;
 	private static final int nsfwOffset;
 	private static boolean init = false;
 
 	static {
-		try (InputStream loaderDllStream = getDllStream("JNISlingshotLoader.dll");
-		     InputStream mainDllStream = getDllStream("JNISlingshot.dll");
-		     InputStream libcurlDllStream = getDllStream("libcurl.dll");
-		     InputStream zlibDllStream = getDllStream("zlib1.dll");
-		     InputStream fmtDllStream = getDllStream("fmt.dll")) {
+		try {
+			if (USE_DEBUG_DLL) {
+				Logger.warn("Using Slingshot debug DLLs, PID: " + IOUtils.getPID());
+			}
 
-			LOADER_DLL_BYTES = loaderDllStream.readAllBytes();
-			MAIN_DLL_BYTES = mainDllStream.readAllBytes();
-			LIBCURL_BYTES = libcurlDllStream.readAllBytes();
-			ZLIB_BYTES = zlibDllStream.readAllBytes();
-			FMT_BYTES = fmtDllStream.readAllBytes();
+			preloadDll("JNISlingshotLoader", "JNISlingshotLoader.dll");
+			preloadDll("JNISlingshot", "JNISlingshot.dll");
+			preloadDll("libcurl", USE_DEBUG_DLL ? "libcurl-d.dll" : "libcurl.dll");
+			preloadDll("zlib", USE_DEBUG_DLL ? "zlibd1.dll" : "zlib1.dll");
+			preloadDll("fmt", USE_DEBUG_DLL ? "fmtd.dll" : "fmt.dll");
 
 			System.out.println("Preloaded DLLs");
 
@@ -66,8 +60,14 @@ public class AOT {
 		}
 	}
 
+	private static void preloadDll(String libName, String dllName) throws IOException, URISyntaxException {
+		try (InputStream loaderDllStream = getDllStream(dllName)) {
+			DLLS.put(libName, new DLL(dllName, loaderDllStream.readAllBytes()));
+		}
+	}
+
 	private static InputStream getDllStream(String dllName) throws URISyntaxException, IOException {
-		return Files.newInputStream(getProjectPath("JNISlingshot\\cmake-build-release\\" + dllName));
+		return Files.newInputStream(getProjectPath("JNISlingshot\\cmake-build-" + (USE_DEBUG_DLL ? "debug" : "release") + "\\" + dllName));
 	}
 
 	private static Path getProjectPath() throws URISyntaxException {
@@ -85,22 +85,23 @@ public class AOT {
 		init = true;
 
 		final Path tempDllFolder = Files.createTempDirectory("JNISlingshot");
-		final String loaderDllPath = writeTempDll(tempDllFolder, "JNISlingshotLoader.dll", LOADER_DLL_BYTES);
-		final String mainDllPath = writeTempDll(tempDllFolder, "JNISlingshot.dll", MAIN_DLL_BYTES);
-		writeTempDll(tempDllFolder, "libcurl.dll", LIBCURL_BYTES);
-		writeTempDll(tempDllFolder, "zlib1.dll", ZLIB_BYTES);
-		writeTempDll(tempDllFolder, "fmt.dll", FMT_BYTES);
+		for (Map.Entry<String, DLL> entry : DLLS.entrySet()) {
+			DLL dll = entry.getValue();
+			writeTempDll(tempDllFolder, dll.dllName, dll.bytes);
+			Logger.info("Loading " + entry.getKey() + " in " + (USE_DEBUG_DLL ? "debug" : "release") + " mode");
+		}
+		final String loaderDllPath = tempDllFolder.resolve(DLLS.get("JNISlingshotLoader").dllName).toString();
+		final String mainDllPath = tempDllFolder.resolve(DLLS.get("JNISlingshot").dllName).toString();
 
 		System.load(loaderDllPath);
 		addDllPath(tempDllFolder.toString());
 
-		System.load(USE_TEST_DLL ? Path.of("JNISlingshot\\cmake-build-release\\JNISlingshot.dll").toAbsolutePath().toString() : mainDllPath);
+		System.load(mainDllPath);
 	}
 
-	private static String writeTempDll(Path tempDllDir, String dllName, byte[] bytes) throws IOException {
+	private static void writeTempDll(Path tempDllDir, String dllName, byte[] bytes) throws IOException {
 		final Path tempDll = tempDllDir.resolve(dllName);
 		Files.write(tempDll, bytes, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
-		return tempDll.toString();
 	}
 
 	public static ByteArrayInputStream getRandomBackgroundBytes() {
@@ -108,5 +109,15 @@ public class AOT {
 		final ByteArrayInputStream inputStream = backgroundBytes.get(new Random().nextInt(max));
 		inputStream.reset();
 		return inputStream;
+	}
+
+	private static class DLL {
+		private final String dllName;
+		private final byte[] bytes;
+
+		private DLL(String dllName, byte[] bytes) {
+			this.dllName = dllName;
+			this.bytes = bytes;
+		}
 	}
 }
