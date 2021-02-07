@@ -3,9 +3,13 @@ project(JNISlingshot)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /Oy") #Maximize speed
-find_package(CURL CONFIG REQUIRED)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /arch:AVX2")
+
+set(BUILD_SHARED_LIBS OFF) #nah
+set(BUILD_CPR_TESTS OFF) #fuck off ffs i don't need them
+set(USE_SYSTEM_CURL ON) #There's linking errors if you let cpr use it's own libcurl
+
+add_subdirectory(cpr)
 
 find_package(JNI REQUIRED)
 include_directories(${JNI_INCLUDE_DIRS})
@@ -17,9 +21,7 @@ include_directories(JNI/include)
 
 add_library(JNISlingshot SHARED library.cpp library.h json.h base64/base64.cpp base64/base64.h stb_image_write.h key.h bswapintrin.h)
 add_library(JNISlingshotLoader SHARED loader.cpp loader.h)
-add_executable(JNISlingshotExe utils/utils.h Tests.cpp base64/base64.cpp base64/base64.h jni_str.h stb_image_write.h)
+add_executable(JNISlingshotExe Tests.cpp base64/base64.cpp base64/base64.h stb_image_write.h bswapintrin.h)
 
-target_link_libraries(JNISlingshot PRIVATE CURL::libcurl)
-target_link_libraries(JNISlingshotExe PRIVATE CURL::libcurl)
-
-target_link_libraries(JNISlingshot PRIVATE fmt::fmt)
+target_link_libraries(JNISlingshot PRIVATE cpr::cpr fmt::fmt JNI)
+target_link_libraries(JNISlingshotExe PRIVATE cpr::cpr fmt::fmt JNI)
