@@ -23,8 +23,8 @@ public class Logger {
 		writer = new PrintStream(Files.newOutputStream(logsPath, CREATE, TRUNCATE_EXISTING), true);
 	}
 
-	private static void doLog(String level, String message) {
-		final StackWalker.StackFrame frame = StackWalker.getInstance().walk(s -> s.skip(2).findFirst()).orElseThrow();
+	private static void doLog(String level, String message, int extraSkip) {
+		final StackWalker.StackFrame frame = StackWalker.getInstance().walk(s -> s.skip(2 + extraSkip).findFirst()).orElseThrow();
 
 		final String format = String.format("[%s] [%s] [%s] : [%s#%s:%s] : %s%n",
 				TIME_PATTERN.format(LocalDateTime.now()),
@@ -39,13 +39,21 @@ public class Logger {
 		System.out.print(format);
 	}
 
-	public static void info(String message) { doLog("Info", message); }
-	public static void error(String message) { doLog("Error", message); }
-	public static void warn(String message) { doLog("Warn", message); }
+	public static void info(String message) { doLog("Info", message, 0); }
+	public static void error(String message) { doLog("Error", message, 0); }
+	public static void warn(String message) { doLog("Warn", message, 0); }
 
-	public static void info(Object message) { doLog("Info", message.toString()); }
-	public static void error(Object message) { doLog("Error", message.toString()); }
-	public static void warn(Object message) { doLog("Warn", message.toString()); }
+	public static void info(Object message) { doLog("Info", message.toString(), 0); }
+	public static void error(Object message) { doLog("Error", message.toString(), 0); }
+	public static void warn(Object message) { doLog("Warn", message.toString(), 0); }
+
+	public static void info(String message, int extraSkip) { doLog("Info", message, extraSkip); }
+	public static void error(String message, int extraSkip) { doLog("Error", message, extraSkip); }
+	public static void warn(String message, int extraSkip) { doLog("Warn", message, extraSkip); }
+
+	public static void info(Object message, int extraSkip) { doLog("Info", message.toString(), extraSkip); }
+	public static void error(Object message, int extraSkip) { doLog("Error", message.toString(), extraSkip); }
+	public static void warn(Object message, int extraSkip) { doLog("Warn", message.toString(), extraSkip); }
 
 	public static void handleError(Throwable t) {
 		final ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
@@ -53,7 +61,7 @@ public class Logger {
 		t.printStackTrace(printStream);
 
 		final String stackTrace = new String(out.toByteArray());
-		doLog("Error", stackTrace);
+		doLog("Error", stackTrace, 0);
 
 		final Runnable code = () -> new ErrorScene("An unexpected exception occurred", stackTrace).showAndWait();
 
