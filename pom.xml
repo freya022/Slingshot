@@ -67,7 +67,7 @@
                         <nativeImageArg>--allow-incomplete-classpath</nativeImageArg>
                     </nativeImageArgs>
                     <linkerArgs>
-                        <linkerArg>SVMFX\Test.obj</linkerArg>
+                        <linkerArg>SVMFX\Resources.obj</linkerArg>
                     </linkerArgs>
                 </configuration>
             </plugin>

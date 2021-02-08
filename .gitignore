@@ -76,6 +76,6 @@ fabric.properties
 # Project exclude paths
 /target/
 .idea
-SVMFX/Test.res
-SVMFX/Test.obj
+SVMFX/Resources.res
+SVMFX/Resources.obj
 SVMFX/reports
