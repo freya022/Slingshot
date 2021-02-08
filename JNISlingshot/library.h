@@ -23,8 +23,6 @@
 #include "bswapintrin.h"
 #include "key.h"
 
-#define init0 Java_com_freya02_slingshot_AOT_init0
-
 #define downloadFile0 Java_com_freya02_slingshot_SlingshotTask_downloadFile0
 #define getDownloadSize0 Java_com_freya02_slingshot_SlingshotTask_getDownloadSize0
 #define launchGame0 Java_com_freya02_slingshot_SlingshotTask_launchGame0
