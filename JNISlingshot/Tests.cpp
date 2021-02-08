@@ -226,6 +226,39 @@ void listFolderTest() {
 	}
 }
 
+void modpackSearchTest() {
+	try {
+		const std::string payloadFormat = R"(
+		{{
+			"query": "Files",
+			"options": {{
+				"path": "{}",
+				"filename_only": true
+			}}
+		}})";
+
+		std::string payload = fmt::format(payloadFormat, "/Versions");
+
+		cpr::Response resp = cpr::Post(
+				cpr::Url("https://api.dropboxapi.com/2/files/search_v2"),
+				cpr::Bearer(KEY),
+				cpr::Header{{"Content-Type", "application/json"}},
+				cpr::Body(payload)
+		);
+
+		if (resp.status_code != 200) {
+			throw std::runtime_error(fmt::format("Status code: {}", resp.status_code));
+		}
+
+		auto j = nlohmann::json::parse(resp.text);
+		for (const auto& match : j["matches"]) {
+			std::cout << match["metadata"]["metadata"]["path_display"] << std::endl;
+		}
+	} catch (const std::exception &e) {
+		fmt::print("Exception: {}", e.what());
+	}
+}
+
 int main() {
 //	skinTest();
 
@@ -242,6 +275,8 @@ int main() {
 //	bswapTest();
 
 //	listFolderTest();
+
+//	modpackSearchTest();
 
 	return 0;
 }

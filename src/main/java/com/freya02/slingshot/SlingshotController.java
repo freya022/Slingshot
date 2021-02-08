@@ -29,10 +29,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import static com.freya02.slingshot.Main.PROFILE_PICTURE_PATH;
 import static com.freya02.slingshot.Main.PROFILE_USERNAME_PATH;
@@ -84,7 +80,7 @@ public class SlingshotController extends LazyWindow {
 
 	private final SimpleBooleanProperty showButtons = new SimpleBooleanProperty(true);
 
-	private final Map<String, List<String>> modpackToVersionMap = new HashMap<>();
+	private final Map<String, List<String>> modpackToVersionMap = new TreeMap<>();
 
 	@Override
 	protected void onInitialized() {
@@ -266,42 +262,28 @@ public class SlingshotController extends LazyWindow {
 		}
 	}
 
-	private static native String[] listFolder0(String dropboxPath) throws IOException;
+	private static native String[] searchModpacks0() throws IOException;
 
 	private void waitForDropbox() {
 		try {
 			AOT.init();
 
-			final ExecutorService es = Executors.newCachedThreadPool();
-			final String[] modpackNames = es.submit(() -> {
-				final String[] modpacks = listFolder0("/Versions");
-
-				for (String modpackName : modpacks) {
-					es.submit(() -> {
-						try {
-							final String[] versions = listFolder0("/Versions/" + modpackName);
-							final List<String> workingVersions = new ArrayList<>();
-							for (String version : versions) {
-								final String[] folders = listFolder0(String.format("/Versions/%s/%s", modpackName, version));
-								if (Arrays.asList(folders).contains("Files")) {
-									workingVersions.add(version);
-								}
-							}
-
-							modpackToVersionMap.put(modpackName, workingVersions);
-						} catch (IOException e) {
-							Logger.handleError(e);
-							System.exit(-8);
-						}
-					});
+			final String[] searchResults = searchModpacks0();
+			for (String s : searchResults) {
+				if (!s.startsWith("/Versions/")) {
+					continue;
 				}
 
-				es.shutdown();
+				//10 is the length of "/Versions/"
+				final int index = s.indexOf('/', 10);
+				final String modpackName = s.substring(10, index);
+				final String version = s.substring(index + 1, s.indexOf('/', index + 1));
 
-				return modpacks;
-			}).get();
+				modpackToVersionMap.computeIfAbsent(modpackName, x -> new ArrayList<>()).add(version);
+			}
 
-			es.awaitTermination(1, TimeUnit.DAYS);
+			String[] modpackNames = modpackToVersionMap.keySet().toArray(new String[0]);
+			modpackToVersionMap.values().forEach(Collections::sort);
 
 			String lastModpack = null, lastVersion = null;
 			if (Files.exists(Main.LAST_USE_PATH)) {
@@ -372,7 +354,7 @@ public class SlingshotController extends LazyWindow {
 					}
 				}
 			});
-		} catch (IOException | InterruptedException | ExecutionException e) {
+		} catch (IOException e) {
 			Logger.handleError(e);
 		}
 	}

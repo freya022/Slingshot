@@ -62,45 +62,42 @@
 	return -1;
 }
 
-[[maybe_unused]] jobjectArray listFolder0(JNIEnv* env, jclass, jstring dropboxJString) {
-	JNI::String dropboxPath(dropboxJString);
-
+[[maybe_unused]] jobjectArray searchModpacks0(JNIEnv* env, jclass) {
 	try {
-		std::string args = fmt::format(R"(
-		{{
-			"path": "{}",
-			"recursive": false,
-			"include_deleted": false,
-			"include_has_explicit_shared_members": false,
-			"include_mounted_folders": true,
-			"include_non_downloadable_files": true
-		}})", dropboxPath.data());
+		constexpr auto payload = R"(
+		{
+			"query": "Files",
+			"options": {
+				"path": "/Versions",
+				"filename_only": true
+			}
+		})";
 
 		cpr::Response resp = cpr::Post(
-				cpr::Url("https://api.dropboxapi.com/2/files/list_folder"),
+				cpr::Url("https://api.dropboxapi.com/2/files/search_v2"),
 				cpr::Bearer(KEY),
 				cpr::Header{{"Content-Type", "application/json"}},
-				cpr::Body{args}
+				cpr::Body(payload)
 		);
 
 		if (resp.status_code != 200) {
 			throw std::runtime_error(fmt::format("Status code: {}", resp.status_code));
 		}
 
-		nlohmann::json j = nlohmann::json::parse(resp.text);
-		auto entries = j["entries"];
-		auto arr = env->NewObjectArray(entries.size(), env->FindClass("java/lang/String"), nullptr);
-		for (int i = 0; i < entries.size(); i++) {
-			auto entryName = entries[i]["name"].get<std::string>();
+		auto j = nlohmann::json::parse(resp.text);
+		const auto &matches = j["matches"];
+		auto arr = env->NewObjectArray(matches.size(), env->FindClass("java/lang/String"), nullptr);
+		for (int i = 0; i < matches.size(); i++) {
+			std::string path = matches[i]["metadata"]["metadata"]["path_display"];
 
-			env->SetObjectArrayElement(arr, i, env->NewStringUTF(entryName.c_str()));
+			env->SetObjectArrayElement(arr, i, env->NewStringUTF(path.c_str()));
 		}
 
 		return arr;
 	} catch (const std::exception& e) {
 		fmt::print("Exception: {}", e.what());
 		env->ThrowNew(env->FindClass("java/io/IOException"),
-					  fmt::format("Exception while listing Dropbox folders in '{}': {}", dropboxPath.data(), e.what()).c_str());
+					  fmt::format("Exception while searching modpacks: {}", e.what()).c_str());
 	}
 
 	return nullptr;

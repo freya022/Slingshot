@@ -30,7 +30,7 @@
 #define getUuid0 Java_com_freya02_slingshot_auth_AuthController_getUuid0
 #define authenticate0 Java_com_freya02_slingshot_auth_AuthController_authenticate0
 
-#define listFolder0 Java_com_freya02_slingshot_SlingshotController_listFolder0
+#define searchModpacks0 Java_com_freya02_slingshot_SlingshotController_searchModpacks0
 #define getSkinImage0 Java_com_freya02_slingshot_SlingshotController_getSkinImage0
 #define openFolder0 Java_com_freya02_slingshot_SlingshotController_openFolder0
 #define saveImage0 Java_com_freya02_slingshot_SlingshotController_saveImage0
@@ -46,7 +46,7 @@ extern "C" {
 
 	[[maybe_unused]] JNIEXPORT void JNICALL downloadFile0(JNIEnv* env, jclass clazz, jstring dropboxJString, jstring osJString, jobject jThis);
 	[[maybe_unused]] JNIEXPORT jlong JNICALL getDownloadSize0(JNIEnv* env, jclass clazz, jstring dropboxJString);
-	[[maybe_unused]] JNIEXPORT jobjectArray JNICALL listFolder0(JNIEnv* env, jclass clazz, jstring dropboxJString);
+	[[maybe_unused]] JNIEXPORT jobjectArray JNICALL searchModpacks0(JNIEnv* env, jclass clazz);
 	[[maybe_unused]] JNIEXPORT void JNICALL launchGame0(JNIEnv* env, jclass, jstring javawJString, jstring workingDirJString, jstring commandlineJString);
 
 	[[maybe_unused]] JNIEXPORT jstring JNICALL getUuid0(JNIEnv* env, jclass clazz, jstring usernameJString);
