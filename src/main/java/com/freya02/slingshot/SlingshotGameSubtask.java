@@ -50,6 +50,9 @@ public class SlingshotGameSubtask extends SlingshotFileSubtask {
 		setState("Checking assets files...");
 
 		checkResults = FileChecks.create(gameFolder, checkListPath, CORES).check();
+		//Don't download config files that are already downloaded
+		checkResults.getDamagedFiles().removeIf(p -> gameFolder.relativize(p).startsWith("config") && Files.exists(p));
+
 		Files.deleteIfExists(checkListPath);
 	}
 
