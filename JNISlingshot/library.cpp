@@ -8,29 +8,36 @@
 		//Only init one time, the method is the same everywhere
 		static jmethodID method = env->GetMethodID(env->GetObjectClass(jThis), "onWrite", "(I)V"); //Param int return void
 
-		std::ofstream out(osPath.data(), std::ios::binary);
-		size_t downloadOld = 0;
-		cpr::Response resp = cpr::Download(
-				out,
-				cpr::Url("https://content.dropboxapi.com/2/files/download"),
-				cpr::Header{{"Dropbox-API-Arg", fmt::format(R"({{"path": "{}"}})", dropboxPath.data())}},
-				cpr::Bearer(KEY),
-				cpr::ProgressCallback([&downloadOld, &jThis, &env](size_t downloadTotal, size_t downloadNow, size_t uploadTotal, size_t uploadNow) {
-					//Don't update Slingshot UI because of CPR spamming these callbacks for no reason
-					if (downloadNow == downloadOld) return true;
+		std::string osPathTmp = std::string(osPath.data()) + ".tmp";
+		{ //Close the std::ofstream handle before doing std::filesystem::move
+			std::ofstream out(osPathTmp, std::ios::binary);
+			size_t downloadOld = 0;
+			cpr::Response resp = cpr::Download(
+					out,
+					cpr::Url("https://content.dropboxapi.com/2/files/download"),
+					cpr::Header{{"Dropbox-API-Arg", fmt::format(R"({{"path": "{}"}})", dropboxPath.data())}},
+					cpr::Bearer(KEY),
+					cpr::ProgressCallback(
+							[&downloadOld, &jThis, &env](size_t downloadTotal, size_t downloadNow, size_t uploadTotal,
+														 size_t uploadNow) {
+								//Don't update Slingshot UI because of CPR spamming these callbacks for no reason
+								if (downloadNow == downloadOld) return true;
 
-					size_t progress = downloadNow - downloadOld;
-					downloadOld = downloadNow;
+								size_t progress = downloadNow - downloadOld;
+								downloadOld = downloadNow;
 
-					env->CallVoidMethod(jThis, method, progress);
+								env->CallVoidMethod(jThis, method, progress);
 
-					return true;
-				})
-		);
+								return true;
+							})
+			);
 
-		if (resp.status_code != 200) {
-			throw std::runtime_error(fmt::format("Dropbox download status code: {}", resp.status_code));
+			if (resp.status_code != 200) {
+				throw std::runtime_error(fmt::format("Dropbox download status code: {}", resp.status_code));
+			}
 		}
+
+		std::filesystem::rename(osPathTmp, osPath.data());
 	} catch (const std::exception& e) {
 		fmt::print("Exception: {}", e.what());
 		env->ThrowNew(env->FindClass("java/io/IOException"),

@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <filesystem>
 
 #include "json.h"
 #include "base64/base64.h"
