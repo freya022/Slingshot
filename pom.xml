@@ -63,7 +63,7 @@
                         <nativeImageArg>-H:ReflectionConfigurationFiles="${project.basedir}\SVMFX\Configs\reflect-config.json","${project.basedir}\SVMFX\Configs\reflect-config-2.json"</nativeImageArg>
                         <nativeImageArg>-H:ResourceConfigurationFiles="${project.basedir}\SVMFX\Configs\resource-config.json"</nativeImageArg>
                         <nativeImageArg>-H:JNIConfigurationFiles="${project.basedir}\SVMFX\Configs\jni-config.json"</nativeImageArg>
-                        <nativeImageArg>--initialize-at-build-time=com.freya02.slingshot.AOT,com.freya02.slingshot.auth.AuthController</nativeImageArg>
+                        <nativeImageArg>--initialize-at-build-time=com.freya02.slingshot.AOT,com.freya02.slingshot.auth.AuthController,com.freya02.ui.ImageUtil,com.freya02.misc.DllLoader</nativeImageArg>
                         <nativeImageArg>--allow-incomplete-classpath</nativeImageArg>
                     </nativeImageArgs>
                     <linkerArgs>
@@ -78,7 +78,7 @@
         <dependency>
             <groupId>com.freya02</groupId>
             <artifactId>Library6</artifactId>
-            <version>1.2.0</version>
+            <version>1.3.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>net.java.dev.jna</groupId>

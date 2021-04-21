@@ -14,9 +14,6 @@
 #include <curl/curl.h>
 #include <cpr/cpr.h>
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-
 #include "jni.h"
 #include "Method.hpp"
 #include "String.hpp"
@@ -34,7 +31,6 @@
 #define searchModpacks0 Java_com_freya02_slingshot_SlingshotController_searchModpacks0
 #define getSkinImage0 Java_com_freya02_slingshot_SlingshotController_getSkinImage0
 #define openFolder0 Java_com_freya02_slingshot_SlingshotController_openFolder0
-#define saveImage0 Java_com_freya02_slingshot_SlingshotController_saveImage0
 
 [[maybe_unused]] BOOL APIENTRY DllMain(HMODULE, DWORD, LPVOID) { return TRUE; }
 
@@ -55,7 +51,6 @@ extern "C" {
 
 	[[maybe_unused]] JNIEXPORT jobjectArray JNICALL getSkinImage0(JNIEnv* env, jclass clazz, jstring uuidJString);
 	[[maybe_unused]] JNIEXPORT void JNICALL openFolder0(JNIEnv* env, jclass, jstring folderPathJString);
-	[[maybe_unused]] JNIEXPORT void JNICALL saveImage0(JNIEnv* env, jclass, jstring pathJString, jintArray jpixels, jint width, jint height);
 }
 
 #endif //JNISLINGSHOT_LIBRARY_H

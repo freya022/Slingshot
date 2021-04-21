@@ -280,19 +280,3 @@
 		ILFree(pidl);
 	}
 }
-
-[[maybe_unused]] void saveImage0(JNIEnv* env, jclass, jstring pathJString, jintArray jpixels, jint width, jint height) {
-	jboolean isCopy;
-	auto* fpixels = reinterpret_cast<unsigned long *>(env->GetIntArrayElements(jpixels, &isCopy));
-
-	for (int i = 0; i < width * height; i += Vec256::size()) {
-		Vec256::swap(reinterpret_cast<uint8_t *>(fpixels), Vec256::getMask<unsigned long>());
-	}
-
-	JNI::String path(pathJString);
-	stbi_write_png(path, width, height, 4, fpixels, width * 4);
-
-	if (isCopy == JNI_TRUE) {
-		env->ReleaseIntArrayElements(jpixels, reinterpret_cast<jint *>(fpixels), JNI_ABORT);
-	}
-}

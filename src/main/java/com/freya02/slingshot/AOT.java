@@ -34,6 +34,8 @@ public class AOT {
 			preloadDll("zlib", USE_DEBUG_DLL ? "zlibd1.dll" : "zlib1.dll");
 			preloadDll("fmt", USE_DEBUG_DLL ? "fmtd.dll" : "fmt.dll");
 
+			Class.forName("com.freya02.ui.ImageUtil"); //Preload ImageUtil DLLs, wont be shown in the logs though because AOT System#setOut is bugged
+
 			System.out.println("Preloaded DLLs");
 
 			//Should be [Project]/target/classes
@@ -55,7 +57,7 @@ public class AOT {
 			nsfwOffset = offset;
 
 			System.out.println("Loaded " + backgroundBytes.size() + " backgrounds");
-		} catch (IOException | URISyntaxException e) {
+		} catch (IOException | URISyntaxException | ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
 	}

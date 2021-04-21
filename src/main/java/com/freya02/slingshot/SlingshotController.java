@@ -2,6 +2,7 @@ package com.freya02.slingshot;
 
 import com.freya02.slingshot.auth.Credentials;
 import com.freya02.slingshot.settings.SettingsController;
+import com.freya02.ui.ImageUtil;
 import com.freya02.ui.UILib;
 import com.freya02.ui.window.LazyWindow;
 import com.freya02.ui.window.WindowBuilder;
@@ -183,10 +184,6 @@ public class SlingshotController extends LazyWindow {
 	private static native Object[] getSkinImage0(String uuid) throws IOException;
 	private static native void openFolder0(String path);
 
-	/**
-	 */
-	private static native void saveImage0(String path, int[] pixels, int width, int height);
-
 	private void updateDetails() {
 		if (Files.exists(PROFILE_USERNAME_PATH) && Files.exists(PROFILE_PICTURE_PATH)) {
 			try {
@@ -231,6 +228,7 @@ public class SlingshotController extends LazyWindow {
 			final PixelReader reader = image.getPixelReader();
 			final PixelWriter writer = writableImage.getPixelWriter();
 
+			//No filtering x4 scaling
 			for (int y = 0; y < 8; y++) {
 				for (int x = 0; x < 8; x++) {
 					final Color color = reader.getColor(8 + x, 8 + y); //64 times
@@ -251,14 +249,7 @@ public class SlingshotController extends LazyWindow {
 
 			Files.writeString(PROFILE_USERNAME_PATH, username, CREATE, TRUNCATE_EXISTING);
 
-			int[] pixels = new int[1024];
-			for (int y = 0; y < 32; y++) {
-				for (int x = 0; x < 32; x++) {
-					pixels[x + y * 32] = writableImage.getPixelReader().getArgb(x, y);
-				}
-			}
-
-			saveImage0(PROFILE_PICTURE_PATH.toString(), pixels, 32, 32);
+			ImageUtil.saveImage(writableImage, PROFILE_PICTURE_PATH);
 		}
 	}
 
