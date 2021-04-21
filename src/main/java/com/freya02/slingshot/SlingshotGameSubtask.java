@@ -47,7 +47,7 @@ public class SlingshotGameSubtask extends SlingshotFileSubtask {
 
 	@Override
 	void checkFiles() throws IOException {
-		setState("Checking assets files...");
+		setState("Checking game files...");
 
 		checkResults = FileChecks.create(gameFolder, checkListPath, CORES).check();
 		//Don't download config files that are already downloaded
