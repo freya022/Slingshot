@@ -21,6 +21,7 @@ public class Settings {
 	private static Settings instance;
 	private boolean NSFW = false;
 	private boolean integrateDiscord = true;
+	private boolean updateEnabled = true;
 
 	private String ram = String.valueOf(Math.min(MAX_RAM, getMaxRam() - getMaxRam() / 4)); //GB
 
@@ -59,12 +60,20 @@ public class Settings {
 		return integrateDiscord;
 	}
 
+	public boolean isUpdateEnabled() {
+		return updateEnabled;
+	}
+
 	public void setNSFW(boolean NSFW) {
 		this.NSFW = NSFW;
 	}
 
 	public void setIntegrateDiscord(boolean integrateDiscord) {
 		this.integrateDiscord = integrateDiscord;
+	}
+
+	public void setUpdateEnabled(boolean updateEnabled) {
+		this.updateEnabled = updateEnabled;
 	}
 
 	public String getRam() {
@@ -79,9 +88,10 @@ public class Settings {
 		if (strings.size() >= 1) NSFW = Boolean.parseBoolean(strings.get(0));
 		if (strings.size() >= 2) ram = strings.get(1);
 		if (strings.size() >= 3) integrateDiscord = Boolean.parseBoolean(strings.get(2));
+		if (strings.size() >= 4) updateEnabled = Boolean.parseBoolean(strings.get(3));
 	}
 
 	public void save() throws IOException {
-		Files.writeString(SETTINGS_PATH, String.join("\n", String.valueOf(NSFW), ram, String.valueOf(integrateDiscord)), CREATE, TRUNCATE_EXISTING);
+		Files.writeString(SETTINGS_PATH, String.join("\n", String.valueOf(NSFW), ram, String.valueOf(integrateDiscord), String.valueOf(updateEnabled)), CREATE, TRUNCATE_EXISTING);
 	}
 }

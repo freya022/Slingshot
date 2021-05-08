@@ -110,51 +110,56 @@ public class SlingshotTask extends IOOperation {
 		Files.createDirectories(gameFolderPath);
 		Files.createDirectories(jreFolder);
 
-		checkVersionChanges();
+		final boolean hasChanged = checkVersionChanges();
 
-		setState("Downloading check lists...");
-		this.progressFormatter = (x, y) -> "Downloading check lists...";
+		if (Settings.getInstance().isUpdateEnabled() || hasChanged) {
+			setState("Downloading check lists...");
+			this.progressFormatter = (x, y) -> "Downloading check lists...";
 
-		final SlingshotAssetsSubtask assetsSubtask = new SlingshotAssetsSubtask(this, assetsFolder);
-		final SlingshotJreSubtask jreSubtask = new SlingshotJreSubtask(this, jreFolder);
-		final SlingshotGameSubtask gameSubtask = new SlingshotGameSubtask(this, gameFolderPath, dropboxGameFolder);
+			final SlingshotAssetsSubtask assetsSubtask = new SlingshotAssetsSubtask(this, assetsFolder);
+			final SlingshotJreSubtask jreSubtask = new SlingshotJreSubtask(this, jreFolder);
+			final SlingshotGameSubtask gameSubtask = new SlingshotGameSubtask(this, gameFolderPath, dropboxGameFolder);
 
-		final Thread assetsCheckThread = assetsSubtask.startChecklistDownload();
-		final Thread gameCheckThread = gameSubtask.startChecklistDownload();
-		final Thread jreCheckThread = jreSubtask.startChecklistDownload();
+			final Thread assetsCheckThread = assetsSubtask.startChecklistDownload();
+			final Thread gameCheckThread = gameSubtask.startChecklistDownload();
+			final Thread jreCheckThread = jreSubtask.startChecklistDownload();
 
-		assetsCheckThread.join();
-		gameCheckThread.join();
-		jreCheckThread.join();
+			assetsCheckThread.join();
+			gameCheckThread.join();
+			jreCheckThread.join();
 
-		assetsSubtask.checkFiles();
-		jreSubtask.checkFiles();
-		gameSubtask.checkFiles();
+			assetsSubtask.checkFiles();
+			jreSubtask.checkFiles();
+			gameSubtask.checkFiles();
 
-		final boolean hasAssetsDamagedFiles = assetsSubtask.hasDamagedFiles();
-		final boolean hasJreDamagedFiles = jreSubtask.hasDamagedFiles();
-		final boolean hasGameDamagedFiles = gameSubtask.hasDamagedFiles();
+			final boolean hasAssetsDamagedFiles = assetsSubtask.hasDamagedFiles();
+			final boolean hasJreDamagedFiles = jreSubtask.hasDamagedFiles();
+			final boolean hasGameDamagedFiles = gameSubtask.hasDamagedFiles();
 
-		if (hasGameDamagedFiles || hasJreDamagedFiles || hasAssetsDamagedFiles) setState("Gathering file download info");
+			if (hasGameDamagedFiles || hasJreDamagedFiles || hasAssetsDamagedFiles)
+				setState("Gathering file download info");
 
-		long sizeToBeDownloaded =  assetsSubtask.requiredDownloadSize() + jreSubtask.requiredDownloadSize() + gameSubtask.requiredDownloadSize();
+			long sizeToBeDownloaded = assetsSubtask.requiredDownloadSize() + jreSubtask.requiredDownloadSize() + gameSubtask.requiredDownloadSize();
 
-		setWorkDone(0);
-		setTotalWork(sizeToBeDownloaded);
+			setWorkDone(0);
+			setTotalWork(sizeToBeDownloaded);
 
-		if (hasAssetsDamagedFiles) {
-			progressFormatter = assetsSubtask.formatter();
-			assetsSubtask.downloadFiles();
-		}
+			if (hasAssetsDamagedFiles) {
+				progressFormatter = assetsSubtask.formatter();
+				assetsSubtask.downloadFiles();
+			}
 
-		if (hasJreDamagedFiles) {
-			progressFormatter = jreSubtask.formatter();
-			jreSubtask.downloadFiles();
-		}
+			if (hasJreDamagedFiles) {
+				progressFormatter = jreSubtask.formatter();
+				jreSubtask.downloadFiles();
+			}
 
-		if (hasGameDamagedFiles) {
-			progressFormatter = gameSubtask.formatter();
-			gameSubtask.downloadFiles();
+			if (hasGameDamagedFiles) {
+				progressFormatter = gameSubtask.formatter();
+				gameSubtask.downloadFiles();
+			}
+		} else {
+			Logger.info("Skipping updates");
 		}
 
 		setState("Starting game...");
@@ -189,7 +194,7 @@ public class SlingshotTask extends IOOperation {
 		return strings;
 	}
 
-	private void checkVersionChanges() throws IOException {
+	private boolean checkVersionChanges() throws IOException {
 		setState("Getting current version...");
 		final String currentGameVersion = Main.getGameVersion(modpackName, "");
 		if (!currentGameVersion.isBlank() && !currentGameVersion.equals(targetVersion)) {
@@ -212,6 +217,10 @@ public class SlingshotTask extends IOOperation {
 				Files.deleteIfExists(gameFolderPath.resolve(toDelete));
 				incrementProgress();
 			}
+
+			return true;
 		}
+
+		return false;
 	}
 }

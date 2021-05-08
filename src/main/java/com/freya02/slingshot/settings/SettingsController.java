@@ -17,7 +17,7 @@ import javafx.scene.paint.Color;
 import java.io.IOException;
 
 public class SettingsController extends JFXDialog {
-	@FXML private JFXToggleButton nsfwToggle, discordToggle;
+	@FXML private JFXToggleButton nsfwToggle, discordToggle, updateToggle;
 	@FXML private JFXSlider ramSlider;
 
 	@FXML private void initialize() {
@@ -31,6 +31,7 @@ public class SettingsController extends JFXDialog {
 		nsfwToggle.setSelected(settings.isNSFW());
 		ramSlider.setValue(Double.parseDouble(settings.getRam()));
 		discordToggle.setSelected(settings.doesIntegrateDiscord());
+		updateToggle.setSelected(settings.isUpdateEnabled());
 	}
 
 	public static SettingsController createController() throws IOException {
@@ -54,6 +55,7 @@ public class SettingsController extends JFXDialog {
 		settings.setNSFW(nsfwToggle.isSelected());
 		settings.setRam(Integer.toString((int) ramSlider.getValue()));
 		settings.setIntegrateDiscord(discordToggle.isSelected());
+		settings.setUpdateEnabled(updateToggle.isSelected());
 
 		try {
 			settings.save();
