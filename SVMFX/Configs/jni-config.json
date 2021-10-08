@@ -61,7 +61,6 @@
     {"name":"notifyMenu","parameterTypes":["int","int","int","int","boolean"] }, 
     {"name":"notifyMouse","parameterTypes":["int","int","int","int","int","int","int","boolean","boolean"] }, 
     {"name":"notifyRepaint","parameterTypes":["int","int","int","int"] }, 
-    {"name":"notifyResize","parameterTypes":["int","int"] }, 
     {"name":"notifyScroll","parameterTypes":["int","int","int","int","double","double","int","int","int","int","int","double","double"] }, 
     {"name":"notifyView","parameterTypes":["int"] }
   ]
@@ -81,6 +80,9 @@
   ]
 },
 {
+  "name":"com.sun.glass.ui.win.WinApplication"
+},
+{
   "name":"com.sun.glass.ui.win.WinDnDClipboard",
   "methods":[
     {"name":"getInstance","parameterTypes":[] }, 
@@ -98,9 +100,16 @@
   ]
 },
 {
+  "name":"com.sun.glass.ui.win.WinPixels"
+},
+{
   "name":"com.sun.glass.ui.win.WinSystemClipboard",
   "fields":[{"name":"ptr"}],
   "methods":[{"name":"fosSerialize","parameterTypes":["java.lang.String","long"] }]
+},
+{
+  "name":"com.sun.glass.ui.win.WinView",
+  "methods":[{"name":"notifyResize","parameterTypes":["int","int"] }]
 },
 {
   "name":"com.sun.glass.ui.win.WinWindow",
@@ -234,6 +243,10 @@
   ]
 },
 {
+  "name":"java.io.IOException",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
+},
+{
   "name":"java.io.InputStream",
   "methods":[
     {"name":"read","parameterTypes":["byte[]","int","int"] }, 
@@ -250,12 +263,6 @@
     {"name":"getPlatformClassLoader","parameterTypes":[] }, 
     {"name":"loadClass","parameterTypes":["java.lang.String"] }
   ]
-},
-{
-  "name":"java.lang.ClassNotFoundException"
-},
-{
-  "name":"java.lang.NoSuchMethodError"
 },
 {
   "name":"java.lang.Object"
@@ -287,6 +294,13 @@
     {"name":"containsKey","parameterTypes":["java.lang.Object"] }, 
     {"name":"put","parameterTypes":["java.lang.Object","java.lang.Object"] }
   ]
+},
+{
+  "name":"jdk.internal.loader.ClassLoaders$PlatformClassLoader"
+},
+{
+  "name":"org.graalvm.nativebridge.jni.JNIExceptionWrapperEntryPoints",
+  "methods":[{"name":"getClassName","parameterTypes":["java.lang.Class"] }]
 },
 {
   "name":"sun.management.VMManagementImpl",

@@ -12,7 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>11</maven.compiler.release>
         <javafx.version>14.0.1</javafx.version>
-        <client.plugin.version>0.1.69-SNAPSHOT</client.plugin.version>
+        <client.plugin.version>1.0.420-SNAPSHOT</client.plugin.version>
         <mainClassName>com.freya02.slingshot.Main</mainClassName>
     </properties>
 
@@ -51,7 +51,7 @@
 
             <plugin>
                 <groupId>com.gluonhq</groupId>
-                <artifactId>client-maven-plugin</artifactId>
+                <artifactId>gluonfx-maven-plugin</artifactId>
                 <version>${client.plugin.version}</version>
                 <configuration>
                     <reflectionList>
@@ -88,7 +88,46 @@
                     <groupId>net.java.dev.jna</groupId>
                     <artifactId>jna-platform</artifactId>
                 </exclusion>
+                <exclusion> <!-- Exclude lib jfoenix as we use fork -->
+                    <groupId>com.jfoenix</groupId>
+                    <artifactId>jfoenix</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>18-ea+3</version> <!-- replace lib's jfx version -->
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>18-ea+3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>18-ea+3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>18-ea+3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>18-ea+3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.rationalityfrontline.workaround</groupId>
+            <artifactId>jfoenix</artifactId>
+            <version>17.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.14.9</version>
         </dependency>
         <dependency>
             <groupId>com.dropbox.core</groupId>

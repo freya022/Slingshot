@@ -11,12 +11,12 @@ if %errorlevel% == 9009 (
 )
 
 cd ..
-call mvn client:compile
+call mvn gluonfx:compile
 cd SVMFX
 
 start /WAIT rc.exe Resources.rc
 start /WAIT cvtres.exe Resources.res
 
 cd ..
-call mvn client:link
+call mvn gluonfx:link
 cd SVMFX

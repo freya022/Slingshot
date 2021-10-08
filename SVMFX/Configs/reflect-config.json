@@ -20,6 +20,9 @@
   "allDeclaredMethods":true
 },
 {
+  "name":"com.freya02.ui.ImageUtil"
+},
+{
   "name":"com.freya02.ui.window.LazyWindow",
   "allDeclaredFields":true,
   "allDeclaredMethods":true
@@ -101,7 +104,15 @@
   "methods":[{"name":"invoke","parameterTypes":["java.lang.reflect.Method","java.lang.Object","java.lang.Object[]"] }]
 },
 {
+  "name":"com.sun.javafx.scene.control.skin.Utils",
+  "methods":[{"name":"getResource","parameterTypes":["java.lang.String"] }]
+},
+{
   "name":"com.sun.javafx.tk.quantum.QuantumToolkit",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -197,7 +208,7 @@
 },
 {
   "name":"java.lang.reflect.AccessibleObject",
-  "fields":[{"name":"override", "allowUnsafeAccess":true}]
+  "methods":[{"name":"setAccessible0","parameterTypes":["boolean"] }]
 },
 {
   "name":"java.nio.ByteBuffer",
@@ -218,6 +229,10 @@
 },
 {
   "name":"javafx.fxml.FXMLLoader"
+},
+{
+  "name":"javafx.geometry.HPos",
+  "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
 },
 {
   "name":"javafx.geometry.Insets",
@@ -380,6 +395,28 @@
   ]
 },
 {
+  "name":"javafx.scene.layout.ColumnConstraints",
+  "allDeclaredMethods":true,
+  "allPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"javafx.scene.layout.ConstraintsBase",
+  "allDeclaredMethods":true
+},
+{
+  "name":"javafx.scene.layout.GridPane",
+  "allDeclaredMethods":true,
+  "allPublicConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"getColumnIndex","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"getRowIndex","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"setColumnIndex","parameterTypes":["javafx.scene.Node","java.lang.Integer"] }, 
+    {"name":"setRowIndex","parameterTypes":["javafx.scene.Node","java.lang.Integer"] }
+  ]
+},
+{
   "name":"javafx.scene.layout.HBox",
   "allDeclaredMethods":true,
   "allPublicConstructors":true,
@@ -398,6 +435,12 @@
   "name":"javafx.scene.layout.Region",
   "allDeclaredFields":true,
   "allDeclaredMethods":true
+},
+{
+  "name":"javafx.scene.layout.RowConstraints",
+  "allDeclaredMethods":true,
+  "allPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"javafx.scene.layout.StackPane",
@@ -461,6 +504,12 @@
 },
 {
   "name":"javafx.scene.text.Font"
+},
+{
+  "name":"javafx.scene.text.Text"
+},
+{
+  "name":"javafx.scene.transform.Transform"
 },
 {
   "name":"javafx.stage.PopupWindow",
