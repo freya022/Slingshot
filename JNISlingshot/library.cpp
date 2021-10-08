@@ -158,7 +158,7 @@
 			"requestUser": true
 		}})";
 
-		std::string payload = fmt::format(payloadFormat, identifier.data(), password.data(), clientToken.data());
+		std::string payload = fmt::vformat(payloadFormat, fmt::make_format_args(identifier.data(), password.data(), clientToken.data()));
 
 		cpr::Response resp = cpr::Post(
 				cpr::Url("https://authserver.mojang.com/authenticate"),

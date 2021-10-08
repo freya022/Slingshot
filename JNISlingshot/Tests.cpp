@@ -85,7 +85,7 @@ void authenticationTest() {
 			"requestUser": true
 		}})";
 
-		std::string payload = fmt::format(payloadFormat, "lol", "xd", "lmao");
+		std::string payload = fmt::vformat(payloadFormat, fmt::make_format_args("lol", "xd", "lmao"));
 
 		cpr::Response resp = cpr::Get(
 				cpr::Url("https://authserver.mojang.com/authenticate"),
@@ -237,7 +237,7 @@ void modpackSearchTest() {
 			}}
 		}})";
 
-		std::string payload = fmt::format(payloadFormat, "/Versions");
+		std::string payload = fmt::vformat(payloadFormat, fmt::make_format_args("/Versions"));
 
 		cpr::Response resp = cpr::Post(
 				cpr::Url("https://api.dropboxapi.com/2/files/search_v2"),
