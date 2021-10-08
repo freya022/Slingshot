@@ -22,6 +22,8 @@ include_directories(JNI/include)
 add_library(JNISlingshot SHARED library.cpp library.h json.h base64/base64.cpp base64/base64.h key.h bswapintrin.h)
 add_library(JNISlingshotLoader SHARED loader.cpp loader.h)
 add_executable(JNISlingshotExe Tests.cpp base64/base64.cpp base64/base64.h bswapintrin.h)
+add_executable(AuthTest AuthTest.cpp)
 
 target_link_libraries(JNISlingshot PRIVATE cpr::cpr fmt::fmt JNI)
 target_link_libraries(JNISlingshotExe PRIVATE cpr::cpr fmt::fmt JNI)
+target_link_libraries(AuthTest PRIVATE cpr::cpr fmt::fmt JNI)
