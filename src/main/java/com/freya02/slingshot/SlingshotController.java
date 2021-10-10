@@ -6,9 +6,9 @@ import com.freya02.ui.ImageUtil;
 import com.freya02.ui.UILib;
 import com.freya02.ui.window.LazyWindow;
 import com.freya02.ui.window.WindowBuilder;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXProgressBar;
-import com.jfoenix.controls.JFXSpinner;
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXProgressBar;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
@@ -70,12 +70,12 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
  * nah
  */
 public class SlingshotController extends LazyWindow {
-	@FXML private JFXButton playButton, modsButton, settingsButton;
+	@FXML private MFXButton playButton, modsButton, settingsButton;
 	@FXML private VBox progressBox;
 	@FXML private Label progressText, usernameLabel;
-	@FXML private JFXProgressBar progressBar;
+	@FXML private MFXProgressBar progressBar;
 	@FXML private ChoiceBox<String> modpackChoiceBox, versionChoiceBox;
-	@FXML private JFXSpinner spinner;
+	@FXML private MFXProgressSpinner spinner;
 	@FXML private ImageView backgroundView, headView;
 	@FXML private HBox profileBox;
 
@@ -153,8 +153,7 @@ public class SlingshotController extends LazyWindow {
 
 	@FXML private void onSettingsClicked(MouseEvent event) {
 		try {
-			final SettingsController controller = SettingsController.createController();
-			controller.show((StackPane) this.getWindow().getRoot());
+			SettingsController.createController((StackPane) this.getWindow().getRoot()).show();
 		} catch (IOException e) {
 			Logger.handleError(e);
 		}

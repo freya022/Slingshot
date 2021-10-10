@@ -1,29 +1,35 @@
 package com.freya02.slingshot.settings;
 
 import com.freya02.slingshot.Logger;
-import com.jfoenix.controls.JFXDialog;
-import com.jfoenix.controls.JFXSlider;
-import com.jfoenix.controls.JFXToggleButton;
+import io.github.palexdev.materialfx.controls.MFXDialog;
+import io.github.palexdev.materialfx.controls.MFXSlider;
+import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
 
-public class SettingsController extends JFXDialog {
-	@FXML private JFXToggleButton nsfwToggle, discordToggle, updateToggle;
-	@FXML private JFXSlider ramSlider;
+public class SettingsController extends MFXDialog {
+	@FXML private MFXToggleButton nsfwToggle, discordToggle, updateToggle;
+	@FXML private MFXSlider ramSlider;
 
 	@FXML private void initialize() {
+		setVisible(false); //Visible by default as added in the stackpane directly
 		setOverlayClose(false);
 		setBackground(new Background(new BackgroundFill(Color.rgb(25, 25, 25, 0.35), CornerRadii.EMPTY, Insets.EMPTY)));
-		setTransitionType(DialogTransition.TOP);
+
+		//enable "animations"
+		setAnimateIn(true);
+		setAnimateOut(true);
+		setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE); //Do not use bigger sizes
+
+		setScrimOpacity(.5);
+
+		setOnClosed(e -> ((Pane) getParent()).getChildren().remove(this)); //Remove ourselves after closing, could circumvent by using a singleton but eh
 
 		ramSlider.setMax(Settings.MAX_RAM);
 
@@ -34,14 +40,15 @@ public class SettingsController extends JFXDialog {
 		updateToggle.setSelected(settings.isUpdateEnabled());
 	}
 
-	public static SettingsController createController() throws IOException {
+	public static SettingsController createController(StackPane stackPane) throws IOException {
 		final SettingsController controller = new SettingsController();
 
 		final FXMLLoader fxmlLoader = new FXMLLoader(SettingsController.class.getResource("Settings.fxml"));
 		fxmlLoader.setController(controller);
-		final Region root = fxmlLoader.load();
+		fxmlLoader.setRoot(controller);
+		fxmlLoader.load();
 
-		controller.setContent(root);
+		stackPane.getChildren().add(controller); //The dialog needs to be added to a **stack pane**
 
 		return controller;
 	}

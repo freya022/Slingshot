@@ -53,3 +53,7 @@ Separator .line {
     -fx-border-width: 0 0 0 1;
     -fx-border-color: white;
 }
+
+.mfx-button {
+	-fx-background-color: transparent;
+}

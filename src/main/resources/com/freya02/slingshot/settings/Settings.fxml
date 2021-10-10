@@ -1,57 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
+
+<?import io.github.palexdev.materialfx.controls.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox id="settingsRoot" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="7.5" stylesheets="@Settings.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Label id="title" text="Settings" />
-      <GridPane>
-        <columnConstraints>
-          <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" />
-          <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
+<fx:root animateIn="true" animateOut="true" scrimOpacity="0.5" style="-fx-background-color: transparent; -fx-border-color: transparent;" type="MFXDialog" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <VBox id="settingsRoot" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="7.5" stylesheets="@Settings.css" BorderPane.alignment="CENTER">
          <children>
-            <Label text="NSFW backgrounds" />
-            <Label text="Update mods" GridPane.rowIndex="1" />
-            <Label text="Discord Rich Presence" GridPane.rowIndex="2" />
-            <JFXToggleButton fx:id="nsfwToggle" contentDisplay="RIGHT" focusTraversable="false" text=" " toggleColor="#008744" toggleLineColor="#0f9b58" GridPane.columnIndex="1">
-               <padding>
-                  <Insets bottom="-5.0" top="-5.0" />
-               </padding>
-            </JFXToggleButton>
-            <JFXToggleButton fx:id="updateToggle" contentDisplay="RIGHT" focusTraversable="false" selected="true" text=" " toggleColor="#008744" toggleLineColor="#0f9b58" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <padding>
-                  <Insets bottom="-5.0" top="-5.0" />
-               </padding>
-            </JFXToggleButton>
-            <JFXToggleButton fx:id="discordToggle" contentDisplay="RIGHT" focusTraversable="false" selected="true" text=" " toggleColor="#008744" toggleLineColor="#0f9b58" GridPane.columnIndex="1" GridPane.rowIndex="2">
-               <padding>
-                  <Insets bottom="-5.0" top="-5.0" />
-               </padding>
-            </JFXToggleButton>
+            <Label id="title" text="Settings" />
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" />
+                <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label text="NSFW backgrounds" />
+                  <Label text="Update mods" GridPane.rowIndex="1" />
+                  <Label text="Discord Rich Presence" GridPane.rowIndex="2" />
+                  <MFXToggleButton fx:id="nsfwToggle" contentDisplay="RIGHT" focusTraversable="false" text=" " toggleColor="#008744" toggleLineColor="#0f9b58" GridPane.columnIndex="1">
+                     <padding>
+                        <Insets bottom="-5.0" top="-5.0" />
+                     </padding>
+                  </MFXToggleButton>
+                  <MFXToggleButton fx:id="updateToggle" contentDisplay="RIGHT" focusTraversable="false" selected="true" text=" " toggleColor="#008744" toggleLineColor="#0f9b58" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <padding>
+                        <Insets bottom="-5.0" top="-5.0" />
+                     </padding>
+                  </MFXToggleButton>
+                  <MFXToggleButton fx:id="discordToggle" contentDisplay="RIGHT" focusTraversable="false" selected="true" text=" " toggleColor="#008744" toggleLineColor="#0f9b58" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <padding>
+                        <Insets bottom="-5.0" top="-5.0" />
+                     </padding>
+                  </MFXToggleButton>
+               </children>
+            </GridPane>
+            <HBox alignment="CENTER" spacing="5.0">
+               <children>
+                  <Label text="Constant heap size (GB) : " />
+                  <MFXSlider fx:id="ramSlider" max="12.0" min="4.0" tickUnit="1.0" unitIncrement="1.0" value="10.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <MFXButton onMouseClicked="#onCancelClicked" prefWidth="90.0" text="Fuck, go back" />
+                  <MFXButton onMouseClicked="#onSaveClicked" prefWidth="90.0" text="Save" />
+               </children>
+            </HBox>
          </children>
-      </GridPane>
-      <HBox alignment="TOP_CENTER">
-         <children>
-            <Label text="Constant heap size (GB) : " />
-            <JFXSlider fx:id="ramSlider" blockIncrement="1.0" focusTraversable="false" majorTickUnit="2.0" max="12.0" min="4.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="10.0" />
-         </children>
-      </HBox>
-      <HBox alignment="CENTER" spacing="10.0">
-         <children>
-            <JFXButton onMouseClicked="#onCancelClicked" prefWidth="90.0" text="Fuck, go back" />
-            <JFXButton onMouseClicked="#onSaveClicked" prefWidth="90.0" text="Save" />
-         </children>
-      </HBox>
-   </children>
-   <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-   </padding>
-</VBox>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+   </center>
+</fx:root>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
+<?import io.github.palexdev.materialfx.controls.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Cursor?>
@@ -8,18 +8,18 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ImageView fx:id="backgroundView" pickOnBounds="true" preserveRatio="true" />
       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@Slingshot.css">
          <children>
             <ChoiceBox id="VersionChoiceBox" fx:id="modpackChoiceBox" disable="true" layoutX="225.0" layoutY="30.0" prefWidth="150.0" />
             <ChoiceBox id="VersionChoiceBox" fx:id="versionChoiceBox" disable="true" layoutX="225.0" layoutY="70.0" prefWidth="150.0" />
-            <JFXSpinner fx:id="spinner" layoutX="193.0" layoutY="30.0" radius="10.0" />
-            <JFXButton id="playButton" fx:id="playButton" defaultButton="true" disable="true" layoutX="260.0" layoutY="213.0" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onPlayClicked" prefWidth="80.0" text="Play" textFill="WHITE">
+            <MFXProgressSpinner fx:id="spinner" layoutX="193.0" layoutY="30.0" radius="10.0" />
+            <MFXButton id="playButton" fx:id="playButton" defaultButton="true" disable="true" layoutX="260.0" layoutY="213.0" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onPlayClicked" prefWidth="80.0" text="Play" textFill="WHITE">
                <cursor>
                   <Cursor fx:constant="HAND" />
-               </cursor></JFXButton>
+               </cursor></MFXButton>
             <VBox id="progressBox" fx:id="progressBox" layoutY="289.0" prefWidth="600.0" visible="false" AnchorPane.bottomAnchor="0.0">
                <children>
                   <Label fx:id="progressText" text="Please wait..." textFill="WHITE">
@@ -30,7 +30,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <JFXProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" prefHeight="17.0" secondaryProgress="0.0" />
+                  <MFXProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" prefHeight="17.0" />
                </children>
             </VBox>
             <HBox fx:id="profileBox" alignment="CENTER" spacing="5.0" styleClass="JFXTextField" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0">
@@ -41,7 +41,7 @@
                   <ImageView fx:id="headView" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" smooth="false" />
                   <Label fx:id="usernameLabel" text="Username" textFill="WHITE" />
                   <Separator orientation="VERTICAL" />
-                  <JFXButton contentDisplay="GRAPHIC_ONLY" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onLogoutClicked" prefHeight="32.0" prefWidth="32.0" textFill="WHITE">
+                  <MFXButton contentDisplay="GRAPHIC_ONLY" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onLogoutClicked" prefHeight="32.0" prefWidth="32.0" textFill="WHITE">
                      <tooltip>
                         <Tooltip text="Log out" />
                      </tooltip>
@@ -51,10 +51,10 @@
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
-                  </JFXButton>
+                  </MFXButton>
                </children>
             </HBox>
-            <JFXButton fx:id="settingsButton" contentDisplay="GRAPHIC_ONLY" defaultButton="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onSettingsClicked" prefHeight="32.0" prefWidth="32.0" styleClass="JFXTextField" textFill="WHITE" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0">
+            <MFXButton fx:id="settingsButton" contentDisplay="GRAPHIC_ONLY" defaultButton="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onSettingsClicked" prefHeight="32.0" prefWidth="32.0" styleClass="JFXTextField" textFill="WHITE" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0">
                <tooltip>
                   <Tooltip text="Open settings" />
                </tooltip>
@@ -64,8 +64,8 @@
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
-            </JFXButton>
-            <JFXButton fx:id="modsButton" contentDisplay="GRAPHIC_ONLY" defaultButton="true" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onOpenModsClicked" prefHeight="32.0" prefWidth="32.0" styleClass="JFXTextField" textFill="WHITE" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="42.0">
+            </MFXButton>
+            <MFXButton fx:id="modsButton" contentDisplay="GRAPHIC_ONLY" defaultButton="true" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onOpenModsClicked" prefHeight="32.0" prefWidth="32.0" styleClass="JFXTextField" textFill="WHITE" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="42.0">
                <tooltip>
                   <Tooltip text="Open mods folder" />
                </tooltip>
@@ -75,7 +75,7 @@
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
-            </JFXButton>
+            </MFXButton>
          </children>
       </AnchorPane>
    </children>

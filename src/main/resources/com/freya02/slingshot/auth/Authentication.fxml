@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
+<?import io.github.palexdev.materialfx.controls.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="300.0" spacing="7.5" stylesheets="@Authentication.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="300.0" spacing="7.5" stylesheets="@Authentication.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label id="title" text="Minecraft authentication" />
       <VBox alignment="TOP_CENTER" spacing="1.0">
          <children>
             <Label text="Username / Email :" />
-            <JFXTextField fx:id="identifierField" alignment="CENTER" focusColor="TRANSPARENT" maxWidth="-Infinity" prefColumnCount="14" styleClass="JFXTextField" unFocusColor="TRANSPARENT" />
+            <MFXTextField fx:id="identifierField" alignment="CENTER" maxWidth="-Infinity" prefColumnCount="14" styleClass="JFXTextField" />
          </children>
       </VBox>
       <VBox alignment="TOP_CENTER" spacing="1.0">
          <children>
             <Label text="Password (optional) :" />
-            <JFXPasswordField fx:id="passwordField" alignment="CENTER" focusColor="TRANSPARENT" maxWidth="-Infinity" prefColumnCount="14" styleClass="JFXTextField" unFocusColor="TRANSPARENT" />
+            <MFXPasswordField fx:id="passwordField" alignment="CENTER" lineColor="#3278dc00" maxWidth="-Infinity" prefColumnCount="14" styleClass="JFXTextField" unfocusedLineColor="#4d4d4d00" />
          </children>
       </VBox>
       <HBox alignment="CENTER" spacing="8.0">
          <children>
-            <JFXSpinner fx:id="spinner" radius="10.0" />
-            <JFXButton fx:id="logButton" defaultButton="true" graphicTextGap="8.0" onMouseClicked="#onLogClicked" prefWidth="60.0" text="Log in" />
-            <JFXSpinner progress="0.0" radius="10.0" visible="false" />
+            <MFXProgressSpinner fx:id="spinner" radius="10.0" />
+            <MFXButton fx:id="logButton" defaultButton="true" graphicTextGap="8.0" onMouseClicked="#onLogClicked" prefWidth="60.0" text="Log in" />
+            <MFXProgressSpinner progress="0.0" radius="10.0" visible="false" />
          </children>
       </HBox>
    </children>

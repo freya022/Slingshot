@@ -218,22 +218,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.sun.javafx.geom.Path2D",
-  "methods":[{"name":"<init>","parameterTypes":["int","byte[]","int","float[]","int"] }]
-},
-{
-  "name":"com.sun.javafx.iio.common.ImageLoaderImpl",
-  "methods":[{"name":"emitWarning","parameterTypes":["java.lang.String"] }]
-},
-{
-  "name":"com.sun.javafx.iio.jpeg.JPEGImageLoader",
-  "methods":[
-    {"name":"setInputAttributes","parameterTypes":["int","int","int","int","int","byte[]"] }, 
-    {"name":"setOutputAttributes","parameterTypes":["int","int"] }, 
-    {"name":"updateImageProgress","parameterTypes":["int"] }
-  ]
-},
-{
   "name":"com.sun.prism.impl.PrismSettings",
   "fields":[
     {"name":"disableD3D9Ex"}, 
@@ -245,13 +229,6 @@
 {
   "name":"java.io.IOException",
   "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]
-},
-{
-  "name":"java.io.InputStream",
-  "methods":[
-    {"name":"read","parameterTypes":["byte[]","int","int"] }, 
-    {"name":"skip","parameterTypes":["long"] }
-  ]
 },
 {
   "name":"java.lang.Class",

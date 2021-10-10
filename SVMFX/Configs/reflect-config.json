@@ -28,53 +28,6 @@
   "allDeclaredMethods":true
 },
 {
-  "name":"com.jfoenix.controls.JFXButton",
-  "allDeclaredMethods":true,
-  "allPublicConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.jfoenix.controls.JFXDialog",
-  "allDeclaredFields":true,
-  "allDeclaredMethods":true
-},
-{
-  "name":"com.jfoenix.controls.JFXPasswordField",
-  "allDeclaredMethods":true,
-  "allPublicConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.jfoenix.controls.JFXProgressBar",
-  "allDeclaredMethods":true,
-  "allPublicConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.jfoenix.controls.JFXSlider",
-  "allDeclaredMethods":true,
-  "allPublicConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.jfoenix.controls.JFXSpinner",
-  "allDeclaredMethods":true,
-  "allPublicConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.jfoenix.controls.JFXTextField",
-  "allDeclaredMethods":true,
-  "allPublicConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.jfoenix.controls.JFXToggleButton",
-  "allDeclaredMethods":true,
-  "allPublicConstructors":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"com.sun.glass.ui.Screen"
 },
 {
@@ -127,10 +80,6 @@
   "methods":[{"name":"getInstance","parameterTypes":[] }]
 },
 {
-  "name":"com.sun.prism.shader.DrawCircle_Color_Loader",
-  "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
-},
-{
   "name":"com.sun.prism.shader.DrawPgram_Color_Loader",
   "methods":[{"name":"loadShader","parameterTypes":["com.sun.prism.ps.ShaderFactory","java.io.InputStream"] }]
 },
@@ -179,6 +128,10 @@
   "methods":[{"name":"createRenderer","parameterTypes":["com.sun.scenario.effect.FilterContext"] }]
 },
 {
+  "name":"com.sun.scenario.effect.impl.prism.ps.PPSBlend_SRC_ATOPPeer",
+  "methods":[{"name":"<init>","parameterTypes":["com.sun.scenario.effect.FilterContext","com.sun.scenario.effect.impl.Renderer","java.lang.String"] }]
+},
+{
   "name":"com.sun.scenario.effect.impl.prism.ps.PPSBlend_SRC_INPeer",
   "methods":[{"name":"<init>","parameterTypes":["com.sun.scenario.effect.FilterContext","com.sun.scenario.effect.impl.Renderer","java.lang.String"] }]
 },
@@ -195,6 +148,58 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"io.github.palexdev.materialfx.controls.MFXButton",
+  "allDeclaredMethods":true,
+  "allPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.github.palexdev.materialfx.controls.MFXDialog",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true
+},
+{
+  "name":"io.github.palexdev.materialfx.controls.MFXPasswordField",
+  "allDeclaredMethods":true,
+  "allPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.github.palexdev.materialfx.controls.MFXProgressBar",
+  "allDeclaredMethods":true,
+  "allPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.github.palexdev.materialfx.controls.MFXProgressSpinner",
+  "allDeclaredMethods":true,
+  "allPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.github.palexdev.materialfx.controls.MFXSlider",
+  "allDeclaredMethods":true,
+  "allPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.github.palexdev.materialfx.controls.MFXTextField",
+  "allDeclaredMethods":true,
+  "allPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.github.palexdev.materialfx.controls.MFXToggleButton",
+  "allDeclaredMethods":true,
+  "allPublicConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"io.github.palexdev.materialfx.controls.base.AbstractMFXDialog",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true
+},
+{
   "name":"java.lang.Character",
   "methods":[{"name":"isIdeographic","parameterTypes":["int"] }]
 },
@@ -205,10 +210,6 @@
 {
   "name":"java.lang.Module",
   "methods":[{"name":"getResourceAsStream","parameterTypes":["java.lang.String"] }]
-},
-{
-  "name":"java.lang.reflect.AccessibleObject",
-  "methods":[{"name":"setAccessible0","parameterTypes":["boolean"] }]
 },
 {
   "name":"java.nio.ByteBuffer",
@@ -310,10 +311,6 @@
   "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
 },
 {
-  "name":"javafx.scene.control.PasswordField",
-  "allDeclaredMethods":true
-},
-{
   "name":"javafx.scene.control.PopupControl",
   "allDeclaredMethods":true
 },
@@ -338,10 +335,6 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"javafx.scene.control.Slider",
-  "allDeclaredMethods":true
-},
-{
   "name":"javafx.scene.control.TextField",
   "allDeclaredMethods":true
 },
@@ -358,15 +351,6 @@
   "allDeclaredMethods":true,
   "allPublicConstructors":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"javafx.scene.control.skin.TextFieldSkin",
-  "fields":[
-    {"name":"textNode"}, 
-    {"name":"textRight"}, 
-    {"name":"textTranslateX"}, 
-    {"name":"usePromptText"}
-  ]
 },
 {
   "name":"javafx.scene.effect.Effect"
@@ -392,6 +376,15 @@
     {"name":"setBottomAnchor","parameterTypes":["javafx.scene.Node","java.lang.Double"] }, 
     {"name":"setLeftAnchor","parameterTypes":["javafx.scene.Node","java.lang.Double"] }, 
     {"name":"setRightAnchor","parameterTypes":["javafx.scene.Node","java.lang.Double"] }
+  ]
+},
+{
+  "name":"javafx.scene.layout.BorderPane",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true,
+  "methods":[
+    {"name":"getAlignment","parameterTypes":["javafx.scene.Node"] }, 
+    {"name":"setAlignment","parameterTypes":["javafx.scene.Node","javafx.geometry.Pos"] }
   ]
 },
 {
@@ -444,7 +437,6 @@
 },
 {
   "name":"javafx.scene.layout.StackPane",
-  "allDeclaredFields":true,
   "allDeclaredMethods":true,
   "allPublicConstructors":true,
   "methods":[{"name":"<init>","parameterTypes":[] }]

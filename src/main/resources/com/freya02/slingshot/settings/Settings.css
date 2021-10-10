@@ -1,14 +1,14 @@
-JFXButton {
+MFXButton {
 	-fx-background-color: rgba(225, 225, 225, 0.1);
 	-fx-border-color: rgb(10, 10, 10);
 	-fx-text-fill: white;
 }
 
-JFXButton:hover {
+MFXButton:hover {
 	-fx-background-color: rgba(225, 225, 225, 0.25);
 }
 
-Label, JFXToggleButton {
+Label, MFXToggleButton {
 	-fx-text-fill: white;
 	-fx-font-size: 13px;
 }
@@ -17,7 +17,7 @@ Label, JFXToggleButton {
 	-fx-font-size: 18px;
 }
 
-JFXButton, Label, JFXToggleButton {
+MFXButton, Label, MFXToggleButton {
 	-fx-font-family: Segoe UI;
 }
 
@@ -25,3 +25,24 @@ JFXButton, Label, JFXToggleButton {
 	-fx-background-color: rgba(35, 35, 35, 1);
 }
 
+.mfx-slider {
+	-mfx-main-color: rgb(15, 155, 88);
+	-mfx-color: black;
+}
+
+.mfx-slider .track {
+	-fx-fill: black;
+}
+
+.mfx-slider .bar {
+	-fx-fill: black;
+}
+
+.mfx-slider {
+	-mfx-main-color: #008744;
+}
+
+.mfx-dialog {
+	-fx-background-color: transparent;
+	-fx-border-color: transparent;
+}

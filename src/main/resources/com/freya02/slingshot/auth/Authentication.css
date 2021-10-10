@@ -1,16 +1,15 @@
-JFXButton {
+MFXButton {
 	-fx-background-color: rgba(225, 225, 225, 0.1);
 	-fx-border-color: rgb(10, 10, 10);
 	-fx-text-fill: white;
 }
 
-JFXButton:hover {
+MFXButton:hover {
 	-fx-background-color: rgba(225, 225, 225, 0.25);
 }
 
 .JFXTextField {
 	-fx-background-color: rgba(225, 225, 225, 0.1);
-	-fx-border-color: rgb(10, 10, 10);
 	-fx-text-fill: white;
 	-fx-prompt-text-fill: darkgrey;
 }
@@ -29,7 +28,7 @@ Label {
 	-fx-font-size: 18px;
 }
 
-JFXButton, Label {
+MFXButton, Label {
 	-fx-font-family: Segoe UI;
 }
 
@@ -37,3 +36,10 @@ JFXButton, Label {
 	-fx-background-color: rgb(35, 35, 35);
 }
 
+.mfx-text-field {
+	-fx-padding: 0.333333em 0 0.333333em 0;
+}
+
+.JFXTextField .unfocused-line {
+	-mfx-unfocused-line-color: white
+}

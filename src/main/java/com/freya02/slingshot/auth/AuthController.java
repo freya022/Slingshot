@@ -5,10 +5,10 @@ import com.freya02.ui.UILib;
 import com.freya02.ui.window.CloseHandler;
 import com.freya02.ui.window.LazyWindow;
 import com.freya02.ui.window.WindowBuilder;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXPasswordField;
-import com.jfoenix.controls.JFXSpinner;
-import com.jfoenix.controls.JFXTextField;
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXPasswordField;
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
@@ -26,10 +26,10 @@ public class AuthController extends LazyWindow {
 	private static final Matcher usernameMatcher = usernamePattern.matcher("");
 	private static final Matcher emailMatcher = emailPattern.matcher("");
 
-	@FXML private JFXTextField identifierField;
-	@FXML private JFXPasswordField passwordField;
-	@FXML private JFXSpinner spinner;
-	@FXML private JFXButton logButton;
+	@FXML private MFXTextField identifierField;
+	@FXML private MFXPasswordField passwordField;
+	@FXML private MFXProgressSpinner spinner;
+	@FXML private MFXButton logButton;
 
 	private final SimpleBooleanProperty working = new SimpleBooleanProperty();
 
