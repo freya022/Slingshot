@@ -71,7 +71,8 @@ public class SlingshotTask extends IOOperation {
 				.replace("[UUID]", credentials.getUuid())
 				.replace("[ACCESS_TOKEN]", credentials.getAccessToken())
 				.replace("[MEMORY]", Settings.getInstance().getRam() + "G")
-				.replace("[SDRP_PROP]", "-Dslingshot.drp.enabled=" + Settings.getInstance().doesIntegrateDiscord());
+				.replace("[SDRP_PROP]", "-Dslingshot.drp.enabled=" + Settings.getInstance().doesIntegrateDiscord())
+				.replace("[USER_TYPE]", "msa"); //Microsoft Account haha
 	}
 
 	public void start() {

@@ -2,22 +2,28 @@
 
 <?import io.github.palexdev.materialfx.controls.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 <VBox alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="300.0" spacing="7.5" stylesheets="@Authentication.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label id="title" text="Minecraft authentication" />
-      <VBox alignment="TOP_CENTER" spacing="1.0">
+      <MFXButton onAction="#onLoginWithMicrosoftAction" text="Log in with Microsoft">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </MFXButton>
+      <HBox alignment="CENTER" spacing="10.0">
          <children>
-            <Label text="Username / Email :" />
-            <MFXTextField fx:id="identifierField" alignment="CENTER" maxWidth="-Infinity" prefColumnCount="14" styleClass="JFXTextField" />
+            <Separator HBox.hgrow="ALWAYS" />
+            <Label text="OR" />
+            <Separator HBox.hgrow="ALWAYS" />
          </children>
-      </VBox>
+      </HBox>
       <VBox alignment="TOP_CENTER" spacing="1.0">
          <children>
-            <Label text="Password (optional) :" />
-            <MFXPasswordField fx:id="passwordField" alignment="CENTER" lineColor="#3278dc00" maxWidth="-Infinity" prefColumnCount="14" styleClass="JFXTextField" unfocusedLineColor="#4d4d4d00" />
+            <Label text="Username :" />
+            <MFXTextField fx:id="identifierField" alignment="CENTER" maxWidth="-Infinity" prefColumnCount="14" styleClass="JFXTextField" />
          </children>
       </VBox>
       <HBox alignment="CENTER" spacing="8.0">
@@ -26,6 +32,9 @@
             <MFXButton fx:id="logButton" defaultButton="true" graphicTextGap="8.0" onMouseClicked="#onLogClicked" prefWidth="60.0" text="Log in" />
             <MFXProgressSpinner progress="0.0" radius="10.0" visible="false" />
          </children>
+         <VBox.margin>
+            <Insets top="7.5" />
+         </VBox.margin>
       </HBox>
    </children>
    <padding>
