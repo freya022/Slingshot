@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.freya02.slingshot.auth.AuthKeys.*;
+import static com.freya02.slingshot.SlingshotSecrets.*;
 
 public class MSAuth extends IOOperation {
 	private static final OkHttpClient CLIENT = new OkHttpClient.Builder().build();

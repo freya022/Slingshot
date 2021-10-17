@@ -79,5 +79,5 @@ fabric.properties
 SVMFX/Resources.res
 SVMFX/Resources.obj
 SVMFX/reports
-src/main/java/com/freya02/slingshot/auth/AuthKeys.java
+src/main/java/com/freya02/slingshot/SlingshotSecrets.java
 UITest
