@@ -11,8 +11,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>11</maven.compiler.release>
-        <javafx.version>14.0.1</javafx.version>
-        <client.plugin.version>0.1.69-SNAPSHOT</client.plugin.version>
+        <javafx.version>15-ea+gvm20</javafx.version>
+        <gluonfx.plugin.version>1.0.14</gluonfx.plugin.version>
         <mainClassName>com.freya02.slingshot.Main</mainClassName>
     </properties>
 
@@ -51,8 +51,8 @@
 
             <plugin>
                 <groupId>com.gluonhq</groupId>
-                <artifactId>client-maven-plugin</artifactId>
-                <version>${client.plugin.version}</version>
+                <artifactId>gluonfx-maven-plugin</artifactId>
+                <version>${gluonfx.plugin.version}</version>
                 <configuration>
                     <reflectionList>
                         <list>com.freya02.slingshot.SlingshotController</list>
@@ -66,9 +66,7 @@
                         <nativeImageArg>--initialize-at-build-time=com.freya02.slingshot.AOT,com.freya02.slingshot.auth.AuthController,com.freya02.ui.ImageUtil,com.freya02.misc.DllLoader</nativeImageArg>
                         <nativeImageArg>--allow-incomplete-classpath</nativeImageArg>
                     </nativeImageArgs>
-                    <linkerArgs>
-                        <linkerArg>SVMFX\Resources.obj</linkerArg>
-                    </linkerArgs>
+                    <javafxStaticSdkVersion>${javafx.version}</javafxStaticSdkVersion>
                 </configuration>
             </plugin>
         </plugins>
