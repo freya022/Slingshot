@@ -48,7 +48,7 @@ void skinTest() {
 
 void downloadTest() {
 	try {
-		std::string path = "/JreCheckList.fchecks";
+		std::string path = "/assets/objects/11/11b2b7b9cac527ce8cfb1cee41285c163ad75869";
 		std::ofstream output("lmao.txt");
 		cpr::Response resp = cpr::Get(
 				cpr::Url("https://content.dropboxapi.com/2/files/download"),
@@ -85,7 +85,7 @@ void authenticationTest() {
 			"requestUser": true
 		}})";
 
-		std::string payload = fmt::format(payloadFormat, "lol", "xd", "lmao");
+		std::string payload = fmt::vformat(payloadFormat, fmt::make_format_args("lol", "xd", "lmao"));
 
 		cpr::Response resp = cpr::Get(
 				cpr::Url("https://authserver.mojang.com/authenticate"),
@@ -105,10 +105,16 @@ void authenticationTest() {
 
 void getSizeTest() {
 	try {
-		std::string path = "/JreCheckList.fchecks";
-		cpr::Response resp = cpr::Head(
-				cpr::Url("https://content.dropboxapi.com/2/files/download"),
-				cpr::Header{{"Dropbox-API-Arg", fmt::format(R"({{"path": "{}"}})", path)}},
+		std::string path = "/jre.zip";
+		cpr::Response resp = cpr::Post(
+				cpr::Url("https://api.dropboxapi.com/2/files/get_metadata"),
+				cpr::Header{{"Content-Type", "application/json"}},
+				cpr::Body(fmt::format(R"({{
+					"include_deleted": false,
+					"include_has_explicit_shared_members": false,
+					"include_media_info": false,
+					"path": "{}"
+				}})", path)),
 				cpr::Bearer(KEY)
 		);
 
@@ -116,7 +122,10 @@ void getSizeTest() {
 			throw std::runtime_error(fmt::format("Status code: {}", resp.status_code));
 		}
 
-		fmt::print("length: {}", resp.header["Content-Length"]);
+		nlohmann::json json = nlohmann::json::parse(resp.text);
+		size_t size = json["size"];
+
+		fmt::print("size: {}", size);
 	} catch (const std::exception& e) {
 		fmt::print("Exception: {}", e.what());
 	}
@@ -237,7 +246,7 @@ void modpackSearchTest() {
 			}}
 		}})";
 
-		std::string payload = fmt::format(payloadFormat, "/Versions");
+		std::string payload = fmt::vformat(payloadFormat, fmt::make_format_args("/Versions"));
 
 		cpr::Response resp = cpr::Post(
 				cpr::Url("https://api.dropboxapi.com/2/files/search_v2"),
@@ -264,7 +273,7 @@ int main() {
 
 //	authenticationTest();
 
-//	downloadTest();
+	downloadTest();
 
 //	getSizeTest();
 

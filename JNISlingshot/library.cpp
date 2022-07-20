@@ -49,9 +49,15 @@
 	JNI::String dropboxPath(dropboxJString);
 
 	try {
-		cpr::Response resp = cpr::Head(
-				cpr::Url("https://content.dropboxapi.com/2/files/download"),
-				cpr::Header{{"Dropbox-API-Arg", fmt::format(R"({{"path": "{}"}})", dropboxPath.data())}},
+		cpr::Response resp = cpr::Post(
+				cpr::Url("https://api.dropboxapi.com/2/files/get_metadata"),
+				cpr::Header{{"Content-Type", "application/json"}},
+				cpr::Body(fmt::format(R"({{
+					"include_deleted": false,
+					"include_has_explicit_shared_members": false,
+					"include_media_info": false,
+					"path": "{}"
+				}})", dropboxPath.data())),
 				cpr::Bearer(KEY)
 		);
 
@@ -59,7 +65,10 @@
 			throw std::runtime_error(fmt::format("Get download size status code: {}", resp.status_code));
 		}
 
-		return std::stoll(resp.header["Content-Length"]);
+		nlohmann::json json = nlohmann::json::parse(resp.text);
+		jlong size = json["size"];
+
+		return size;
 	} catch (const std::exception& e) {
 		fmt::print("Exception: {}", e.what());
 		env->ThrowNew(env->FindClass("java/io/IOException"),
@@ -158,7 +167,7 @@
 			"requestUser": true
 		}})";
 
-		std::string payload = fmt::format(payloadFormat, identifier.data(), password.data(), clientToken.data());
+		std::string payload = fmt::vformat(payloadFormat, fmt::make_format_args(identifier.data(), password.data(), clientToken.data()));
 
 		cpr::Response resp = cpr::Post(
 				cpr::Url("https://authserver.mojang.com/authenticate"),
